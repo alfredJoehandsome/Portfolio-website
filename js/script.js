@@ -70,7 +70,8 @@ if (revealElements.length > 0) {
 (function () {
     // Grab the canvas element defined in index.html
     const canvas = document.getElementById('star-canvas');
-    if (!canvas) {
+    const heroSection = document.getElementById('hero');
+    if (!canvas || !heroSection) {
         return;
     }
     // Grab the star counter span. If the counter element is absent the script
@@ -84,10 +85,11 @@ if (revealElements.length > 0) {
     let width;
     let height;
 
-    // Resize the canvas to match the viewport
+    // Resize the canvas to match the hero section
     function resizeCanvas() {
-        width = window.innerWidth;
-        height = window.innerHeight;
+        const rect = heroSection.getBoundingClientRect();
+        width = rect.width;
+        height = rect.height;
         canvas.width = width;
         canvas.height = height;
     }
@@ -188,8 +190,17 @@ if (revealElements.length > 0) {
 
     // On document click, determine if a star was clicked and trigger firework
     document.addEventListener('click', (event) => {
-        const cx = event.clientX;
-        const cy = event.clientY;
+        const rect = canvas.getBoundingClientRect();
+        if (
+            event.clientX < rect.left ||
+            event.clientX > rect.right ||
+            event.clientY < rect.top ||
+            event.clientY > rect.bottom
+        ) {
+            return;
+        }
+        const cx = event.clientX - rect.left;
+        const cy = event.clientY - rect.top;
         // Check from end to start to allow safe removal
         for (let i = stars.length - 1; i >= 0; i--) {
             const s = stars[i];
