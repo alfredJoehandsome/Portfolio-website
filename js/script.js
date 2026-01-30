@@ -24,30 +24,14 @@ if (menuToggle && navLinks) {
     });
 }
 
-// -----------------------------------------
-// Update footer year automatically
-// -----------------------------------------
 
-// Find the <span id="year"> in the footer
 const yearSpan = document.getElementById('year');
 if (yearSpan) {
-    // Use the current year so the footer stays up to date without manual edits
     const now = new Date();
     yearSpan.textContent = now.getFullYear();
 }
 
-// -----------------------------------------
-// Scroll reveal for sections (eyecandy)
-// -----------------------------------------
-//
-// Idea (concept: IntersectionObserver):
-//  - Elements with class "reveal" start hidden and shifted down (CSS).
-//  - When they enter the viewport, we add "in-view".
-//  - CSS then fades and slides them into place.
-//  - This runs once per element, so it is cheap and does not animate constantly.
-//
 
-// Select all elements that should be revealed on scroll
 const revealElements = document.querySelectorAll('.reveal');
 
 if (revealElements.length > 0) {
@@ -82,11 +66,7 @@ if (revealElements.length > 0) {
     }
 }
 
-// ---------------------------------------------------------
-// Falling stars & click-triggered fireworks
-// ---------------------------------------------------------
 
-// Immediately invoked function to encapsulate the particle system
 (function () {
     // Grab the canvas element defined in index.html
     const canvas = document.getElementById('star-canvas');
@@ -124,7 +104,7 @@ if (revealElements.length > 0) {
     // spawned until existing ones are removed (either by clicking or moving off
     // screen). This prevents the canvas from becoming overcrowded if the user
     // does not click on any stars.
-    const MAX_STARS = 20;
+    const MAX_STARS = 10;
 
     // A palette of colours for stars and fireworks (inspired by the accent colours)
     // Colours for stars and fireworks. Choose bright, high-contrast colours so
