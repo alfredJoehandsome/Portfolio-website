@@ -31,6 +31,7 @@ html {
     --surface-dark: #010409;
     --primary: #c778dd;
     --secondary: #6bc7a5;
+    --secondary-hover: rgba(107, 199, 165, 0.7);
     --heading: #e5e5e6;
     --text: #a9a9b2;
     --max-width: 1200px;
@@ -53,7 +54,7 @@ a {
 }
 
     a:hover {
-        color: var(--secondary);
+        color: var(--secondary-hover);
     }
 
 /* Navbar */
@@ -140,6 +141,7 @@ a {
     /* Fixed background gives a subtle parallax feel on desktop */
     background-attachment: fixed;
     position: relative;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -165,7 +167,7 @@ a {
 
 .hero-content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     max-width: 800px;
     padding: 0 1rem;
     /* Hero fade-in: start invisible and slightly lower */
@@ -231,8 +233,8 @@ a {
 }
 
     .btn:hover {
-        background: var(--secondary);
-        border-color: var(--secondary);
+        background: var(--secondary-hover);
+        border-color: var(--secondary-hover);
         /* Slight lift and glow on hover */
         transform: translateY(-2px);
         box-shadow: 0 0 20px rgba(108, 99, 255, 0.5);
@@ -403,7 +405,7 @@ h2 {
     }
 
         .project-links a:hover {
-            color: var(--secondary);
+            color: var(--secondary-hover);
         }
 
     .project-links svg {
@@ -479,7 +481,7 @@ h2 {
     }
 
         .social-icons a:hover {
-            color: var(--secondary);
+            color: var(--secondary-hover);
         }
 
     .social-icons svg {
@@ -561,38 +563,40 @@ footer {
 }
 
 /*
-  Full-viewport canvas used for animated falling stars and fireworks.
-  Positioned above all other content but set to ignore pointer events so that
-  regular page interactions still work. Click detection for stars is handled
-  in JavaScript via a document-level event listener.
+  Hero-scoped canvas for animated falling stars and fireworks.
+  Positioned inside the hero so it scrolls away with the hero background.
 */
 #star-canvas {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 10000;
+    z-index: 1;
     pointer-events: none;
+    transition: opacity 0.2s ease;
 }
 
 /*
-  Star counter: displays the number of stars the user has collected. Positioned
-  fixed in the bottom left corner above the canvas. Use a slightly larger
-  font and a muted colour so it stands out without being distracting. Set
-  pointer-events to none so it does not block clicks on stars or other UI
-  elements. A high z-index ensures the counter is visible above other
-  content and the canvas.
+  Star counter: displays the number of stars collected. Scoped to the hero
+  so it only appears while the hero is visible.
 */
 .star-counter {
-    position: fixed;
+    position: absolute;
     bottom: 1rem;
     left: 1rem;
-    z-index: 10001;
+    z-index: 2;
     font-size: 0.95rem;
     color: var(--heading);
     background: rgba(0, 0, 0, 0.4);
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
     pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.hero--stars-hidden #star-canvas,
+.hero--stars-hidden .star-counter {
+    opacity: 0;
+    visibility: hidden;
 }
