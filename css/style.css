@@ -31,6 +31,7 @@ html {
     --surface-dark: #010409;
     --primary: #c778dd;
     --secondary: #6bc7a5;
+    --secondary-hover: rgba(107, 199, 165, 0.7);
     --heading: #e5e5e6;
     --text: #a9a9b2;
     --max-width: 1200px;
@@ -53,7 +54,7 @@ a {
 }
 
     a:hover {
-        color: var(--secondary);
+        color: var(--secondary-hover);
     }
 
 /* Navbar */
@@ -232,8 +233,8 @@ a {
 }
 
     .btn:hover {
-        background: var(--secondary);
-        border-color: var(--secondary);
+        background: var(--secondary-hover);
+        border-color: var(--secondary-hover);
         /* Slight lift and glow on hover */
         transform: translateY(-2px);
         box-shadow: 0 0 20px rgba(108, 99, 255, 0.5);
@@ -404,7 +405,7 @@ h2 {
     }
 
         .project-links a:hover {
-            color: var(--secondary);
+            color: var(--secondary-hover);
         }
 
     .project-links svg {
@@ -480,7 +481,7 @@ h2 {
     }
 
         .social-icons a:hover {
-            color: var(--secondary);
+            color: var(--secondary-hover);
         }
 
     .social-icons svg {
