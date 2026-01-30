@@ -212,7 +212,7 @@ if (revealElements.length > 0) {
         for (let i = 0; i < numParticles; i++) {
             const angle = Math.random() * Math.PI * 2;
             // Slightly broaden the speed range so fireworks spread further
-            const speed = Math.random() * 3 + 2;
+            const speed = Math.random() * 3 + 4;
             const colour = STAR_COLOURS[Math.floor(Math.random() * STAR_COLOURS.length)];
             particles.push({
                 x: x,
