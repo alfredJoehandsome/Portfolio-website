@@ -70,7 +70,8 @@ if (revealElements.length > 0) {
 (function () {
     // Grab the canvas element defined in index.html
     const canvas = document.getElementById('star-canvas');
-    if (!canvas) {
+    const heroSection = document.getElementById('hero');
+    if (!canvas || !heroSection) {
         return;
     }
     // Grab the star counter span. If the counter element is absent the script
@@ -84,10 +85,11 @@ if (revealElements.length > 0) {
     let width;
     let height;
 
-    // Resize the canvas to match the viewport
+    // Resize the canvas to match the hero section
     function resizeCanvas() {
-        width = window.innerWidth;
-        height = window.innerHeight;
+        const rect = heroSection.getBoundingClientRect();
+        width = rect.width;
+        height = rect.height;
         canvas.width = width;
         canvas.height = height;
     }
@@ -98,6 +100,42 @@ if (revealElements.length > 0) {
     const stars = [];
     // Fireworks bursts hold arrays of particles
     const fireworks = [];
+    let heroVisible = true;
+
+    function setHeroVisibility(isVisible) {
+        heroVisible = isVisible;
+        heroSection.classList.toggle('hero--stars-hidden', !isVisible);
+        if (!isVisible) {
+            stars.length = 0;
+            fireworks.length = 0;
+            ctx.clearRect(0, 0, width, height);
+        }
+    }
+
+    if ('IntersectionObserver' in window) {
+        const heroObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    setHeroVisibility(entry.isIntersecting);
+                });
+            },
+            {
+                threshold: 0.1,
+            }
+        );
+
+        heroObserver.observe(heroSection);
+    } else {
+        const updateVisibility = () => {
+            const rect = heroSection.getBoundingClientRect();
+            const isVisible = rect.bottom > 0 && rect.top < window.innerHeight;
+            setHeroVisibility(isVisible);
+        };
+
+        window.addEventListener('scroll', updateVisibility, { passive: true });
+        window.addEventListener('resize', updateVisibility);
+        updateVisibility();
+    }
 
     // Maximum number of shooting stars allowed on screen at once. If the number
     // of stars in the stars array reaches this value, new stars will not be
@@ -126,6 +164,9 @@ if (revealElements.length > 0) {
         // Before creating a new star, check the current count. If there are
         // already too many stars on screen, skip spawning. This keeps the
         // number of stars manageable even if none are clicked.
+        if (!heroVisible) {
+            return;
+        }
         if (stars.length >= MAX_STARS) {
             return;
         }
@@ -188,8 +229,17 @@ if (revealElements.length > 0) {
 
     // On document click, determine if a star was clicked and trigger firework
     document.addEventListener('click', (event) => {
-        const cx = event.clientX;
-        const cy = event.clientY;
+        const rect = canvas.getBoundingClientRect();
+        if (
+            event.clientX < rect.left ||
+            event.clientX > rect.right ||
+            event.clientY < rect.top ||
+            event.clientY > rect.bottom
+        ) {
+            return;
+        }
+        const cx = event.clientX - rect.left;
+        const cy = event.clientY - rect.top;
         // Check from end to start to allow safe removal
         for (let i = stars.length - 1; i >= 0; i--) {
             const s = stars[i];
@@ -256,6 +306,10 @@ if (revealElements.length > 0) {
 
     // Main animation loop
     function animate() {
+        if (!heroVisible) {
+            requestAnimationFrame(animate);
+            return;
+        }
         ctx.clearRect(0, 0, width, height);
         // Draw and update stars
         for (let i = stars.length - 1; i >= 0; i--) {

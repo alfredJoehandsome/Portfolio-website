@@ -120,6 +120,16 @@
                     <a href="#resume" class="btn-outline">Resume</a>
                 </div>
             </div>
+
+            <!-- Canvas overlay for the shooting stars. It is scoped to the hero
+                 so stars only appear over the hero background. -->
+            <canvas id="star-canvas"></canvas>
+
+            <!-- Star collection counter. This sits inside the hero so it only
+                 appears when the hero is in view. -->
+            <div id="star-counter" class="star-counter">
+                Stars collected: <span id="star-count-value">0</span>
+            </div>
         </section>
 
         <section id="about" class="about">
@@ -286,19 +296,6 @@
             <p>&copy; <span id="year"></span> Alfred Johansson</p>
         </div>
     </footer>
-
-    <!-- Canvas overlay for the shooting stars. This element spans the entire viewport
-         and sits above all other content. The script in js/script.js uses
-         this canvas to render diagonally‑falling stars with trails and fireworks. -->
-    <canvas id="star-canvas"></canvas>
-
-    <!-- Star collection counter. This element lives in the bottom left of the screen
-         and updates whenever the user clicks a shooting star. It is layered
-         above the canvas but does not intercept mouse events. The JavaScript
-         in js/script.js handles incrementing the number and updating the text. -->
-    <div id="star-counter" class="star-counter">
-        Stars collected: <span id="star-count-value">0</span>
-    </div>
 
     <script src="js/script.js"></script>
 </body>
