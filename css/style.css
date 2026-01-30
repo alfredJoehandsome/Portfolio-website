@@ -573,6 +573,7 @@ footer {
     height: 100%;
     z-index: 1;
     pointer-events: none;
+    transition: opacity 0.2s ease;
 }
 
 /*
@@ -590,4 +591,11 @@ footer {
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
     pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.hero--stars-hidden #star-canvas,
+.hero--stars-hidden .star-counter {
+    opacity: 0;
+    visibility: hidden;
 }

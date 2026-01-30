@@ -100,6 +100,42 @@ if (revealElements.length > 0) {
     const stars = [];
     // Fireworks bursts hold arrays of particles
     const fireworks = [];
+    let heroVisible = true;
+
+    function setHeroVisibility(isVisible) {
+        heroVisible = isVisible;
+        heroSection.classList.toggle('hero--stars-hidden', !isVisible);
+        if (!isVisible) {
+            stars.length = 0;
+            fireworks.length = 0;
+            ctx.clearRect(0, 0, width, height);
+        }
+    }
+
+    if ('IntersectionObserver' in window) {
+        const heroObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    setHeroVisibility(entry.isIntersecting);
+                });
+            },
+            {
+                threshold: 0.1,
+            }
+        );
+
+        heroObserver.observe(heroSection);
+    } else {
+        const updateVisibility = () => {
+            const rect = heroSection.getBoundingClientRect();
+            const isVisible = rect.bottom > 0 && rect.top < window.innerHeight;
+            setHeroVisibility(isVisible);
+        };
+
+        window.addEventListener('scroll', updateVisibility, { passive: true });
+        window.addEventListener('resize', updateVisibility);
+        updateVisibility();
+    }
 
     // Maximum number of shooting stars allowed on screen at once. If the number
     // of stars in the stars array reaches this value, new stars will not be
@@ -128,6 +164,9 @@ if (revealElements.length > 0) {
         // Before creating a new star, check the current count. If there are
         // already too many stars on screen, skip spawning. This keeps the
         // number of stars manageable even if none are clicked.
+        if (!heroVisible) {
+            return;
+        }
         if (stars.length >= MAX_STARS) {
             return;
         }
@@ -267,6 +306,10 @@ if (revealElements.length > 0) {
 
     // Main animation loop
     function animate() {
+        if (!heroVisible) {
+            requestAnimationFrame(animate);
+            return;
+        }
         ctx.clearRect(0, 0, width, height);
         // Draw and update stars
         for (let i = stars.length - 1; i >= 0; i--) {
