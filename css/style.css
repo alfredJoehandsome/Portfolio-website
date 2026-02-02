@@ -338,6 +338,7 @@ h2 {
 
 .project-card {
     position: relative;
+    z-index: 0;
     background: var(--surface-medium);
     border-radius: 8px;
     overflow: visible;
