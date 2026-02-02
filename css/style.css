@@ -340,7 +340,7 @@ h2 {
     position: relative;
     background: var(--surface-medium);
     border-radius: 8px;
-    overflow: hidden;
+    overflow: visible;
     /* Start with a subtle shadow */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     display: flex;
@@ -362,6 +362,7 @@ h2 {
         width: 100%;
         height: 160px;
         object-fit: cover;
+        border-radius: 8px 8px 0 0;
     }
 
 .project-info {
@@ -414,6 +415,71 @@ h2 {
         flex: 0 0 24px; /* icon stays 24px, text gets the rest */
         fill: currentColor;
     }
+
+.project-popover {
+    position: absolute;
+    top: 1rem;
+    right: -18.5rem;
+    width: 17.5rem;
+    padding: 1rem;
+    background: rgba(13, 17, 23, 0.98);
+    border: 1px solid rgba(199, 120, 221, 0.45);
+    border-radius: 12px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity var(--transition), transform var(--transition);
+    z-index: 5;
+}
+
+.project-popover h4 {
+    color: var(--heading);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.project-popover p {
+    font-size: 0.85rem;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+}
+
+.project-popover__images {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+}
+
+.project-popover__images img {
+    width: 100%;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.project-popover__details {
+    list-style: none;
+    display: grid;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text);
+}
+
+.project-popover__details li::before {
+    content: '•';
+    color: var(--primary);
+    margin-right: 0.4rem;
+}
+
+.project-card:hover .project-popover,
+.project-card:focus-within .project-popover {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
 /* Filled icons (GitHub, external) */
 .icon {
     width: 24px;
@@ -559,6 +625,17 @@ footer {
 
     .menu-toggle {
         display: flex;
+    }
+}
+
+@media (max-width: 900px) {
+    .project-popover {
+        position: static;
+        width: auto;
+        margin: 1rem 1rem 1.5rem;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
     }
 }
 
