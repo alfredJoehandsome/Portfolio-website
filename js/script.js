@@ -24,6 +24,41 @@ if (menuToggle && navLinks) {
     });
 }
 
+const projectCards = document.querySelectorAll('.project-card');
+
+function updatePopoverPosition(card) {
+    if (window.innerWidth <= 900) {
+        return;
+    }
+
+    const popover = card.querySelector('.project-popover');
+    if (!popover) {
+        return;
+    }
+
+    popover.classList.remove('project-popover--left');
+    const defaultRect = popover.getBoundingClientRect();
+    if (defaultRect.right > window.innerWidth - 16) {
+        popover.classList.add('project-popover--left');
+        const leftRect = popover.getBoundingClientRect();
+        if (leftRect.left < 16) {
+            popover.classList.remove('project-popover--left');
+        }
+    }
+}
+
+if (projectCards.length > 0) {
+    projectCards.forEach((card) => {
+        const handler = () => updatePopoverPosition(card);
+        card.addEventListener('mouseenter', handler);
+        card.addEventListener('focusin', handler);
+    });
+
+    window.addEventListener('resize', () => {
+        projectCards.forEach((card) => updatePopoverPosition(card));
+    });
+}
+
 
 const yearSpan = document.getElementById('year');
 if (yearSpan) {
