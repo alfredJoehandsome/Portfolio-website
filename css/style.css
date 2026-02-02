@@ -431,7 +431,7 @@ h2 {
     transform: translateY(8px);
     pointer-events: none;
     transition: opacity var(--transition), transform var(--transition);
-    z-index: 10;
+    z-index: 5;
 }
 
 .project-popover h4 {
@@ -480,11 +480,6 @@ h2 {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
-}
-
-.project-card:hover,
-.project-card:focus-within {
-    z-index: 3;
 }
 /* Filled icons (GitHub, external) */
 .icon {
