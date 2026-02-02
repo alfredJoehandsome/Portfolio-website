@@ -34,6 +34,7 @@ html {
     --secondary-hover: rgba(107, 199, 165, 0.7);
     --heading: #e5e5e6;
     --text: #a9a9b2;
+    --about-portrait-size: 240px;
     --max-width: 1200px;
     --transition: 0.3s ease;
     font-size: 16px;
@@ -289,6 +290,50 @@ h2 {
         margin-bottom: 2rem;
         max-width: 800px;
     }
+
+.about-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.about-content {
+    min-width: 0;
+}
+
+.about-portrait {
+    width: var(--about-portrait-size);
+    height: var(--about-portrait-size);
+    border-radius: 50%;
+    border: 4px solid var(--primary);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-dark);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.about-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .about-layout {
+        grid-template-columns: 1fr;
+        text-align: left;
+        justify-items: center;
+    }
+
+    .about-portrait {
+        margin: 0 auto;
+    }
+}
 
 .skills {
     display: grid;
