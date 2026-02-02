@@ -398,6 +398,48 @@ h2 {
     transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
+/* Featured project card: elevated but restrained emphasis without hover dependency. */
+.project-card--featured {
+    /* Slightly brighter surface keeps the same palette while lifting importance. */
+    background: #141a24;
+    /* Thicker, tasteful border to signal "featured" at a glance. */
+    border: 2px solid rgba(199, 120, 221, 0.25);
+    /* Mild glow to separate from the grid without overpowering. */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+}
+
+    .project-card--featured::before {
+        /* Low-contrast star points embedded in the border for a subtle motif. */
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 8px;
+        padding: 2px;
+        background:
+            radial-gradient(2px 2px at 12px 10px, rgba(229, 229, 230, 0.35), transparent 60%),
+            radial-gradient(1.5px 1.5px at 85% 12px, rgba(199, 120, 221, 0.3), transparent 60%),
+            radial-gradient(1.5px 1.5px at 18px 85%, rgba(229, 229, 230, 0.25), transparent 60%),
+            radial-gradient(2px 2px at 85% 85%, rgba(199, 120, 221, 0.25), transparent 60%);
+        pointer-events: none;
+        /* Mask confines the star points to the border thickness. */
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        z-index: 0;
+    }
+
+    .project-card--featured > * {
+        /* Keep content above the decorative border layer. */
+        position: relative;
+        z-index: 1;
+    }
+
+    .project-card--featured:hover {
+        /* Optional hover lift without removing the featured baseline. */
+        border-color: rgba(199, 120, 221, 0.35);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.65);
+    }
+
     .project-card:hover {
         /* Slightly stronger lift than before to feel more reactive */
         transform: translateY(-6px);
