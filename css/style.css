@@ -358,11 +358,11 @@ h2 {
         transform: translateY(-6px);
         box-shadow: 0 12px 24px rgba(0, 0, 0, 0.7);
         border-color: var(--primary);
-        z-index: 20;
+        z-index: 10;
     }
 
     .project-card:focus-within {
-        z-index: 20;
+        z-index: 10;
     }
 
     .project-card img {
@@ -437,7 +437,7 @@ h2 {
     transform: translateY(8px);
     pointer-events: none;
     transition: opacity var(--transition), transform var(--transition);
-    z-index: 30;
+    z-index: 20;
 }
 
 .project-popover h4 {
