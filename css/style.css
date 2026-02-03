@@ -83,11 +83,30 @@ a {
     }
 
     .navbar .logo {
-        font-size: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 1.6rem;
         font-weight: 700;
+        line-height: 1.05;
+        white-space: normal; 
         color: var(--heading);
-        white-space: nowrap;
     }
+        .navbar .logo .logo-name {
+            font-size: inherit; 
+        }
+
+        .navbar .logo .logo-sub {
+            font-size: 0.7em; /* relative to logo font-size */
+            font-weight: 500;
+            line-height: 1;
+            margin-top: 0.1rem;
+            color: var(--text);
+            opacity: 0.9;
+        }
+
+
+
 
     .navbar .nav-links {
         list-style: none;
@@ -283,7 +302,7 @@ h2 {
 
 /* About Section */
 .about {
-    background: var(--surface-medium);
+    background: var(--surface-light);
 }
 
     .about p {
@@ -372,7 +391,7 @@ h2 {
 
 /* Projects Section */
 .projects {
-    background: var(--surface-light);
+    background: var(--surface-medium);
 }
 
 .project-grid {
@@ -385,7 +404,7 @@ h2 {
 
 .project-card {
     position: relative;
-    background: var(--surface-medium);
+    background: var(--surface-dark);
     border-radius: 8px;
     overflow: visible;
     /* Start with a subtle shadow */
@@ -707,13 +726,13 @@ footer {
     }
 
     .navbar .logo {
-        font-size: 1.1rem;
+        font-size: 1rem;
         white-space: normal; /* allow wrapping */
         line-height: 1.2;
         max-width: 70vw; /* prevent overflow */
     }
-    .logo-sub {
-        font-size: 0.85em;
+    .navbar .logo-sub {
+        font-size: 0.65rem;
         font-weight: 500;
         color: var(--text);
     }

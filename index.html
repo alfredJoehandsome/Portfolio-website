@@ -84,9 +84,10 @@
     <header class="navbar">
         <div class="container">
             <a class="logo" href="#hero">
-                Alfred Johansson<br>
+                <span class="logo-name">Alfred Johansson</span>
                 <span class="logo-sub">Junior Game Developer</span>
             </a>
+
 
 
             <button class="menu-toggle"
@@ -100,8 +101,8 @@
 
             <nav aria-label="Primary navigation">
                 <ul class="nav-links" id="nav-links">
-                    <li><a href="#about">About</a></li>
                     <li><a href="#projects">Projects</a></li>
+                    <li><a href="#about">About</a></li>
                     <li><a href="#resume">Resume</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -122,76 +123,17 @@
             </div>
 
             <!-- Canvas overlay for the shooting stars. It is scoped to the hero
-                 so stars only appear over the hero background. -->
+             so stars only appear over the hero background. -->
             <canvas id="star-canvas"></canvas>
 
             <!-- Star collection counter. This sits inside the hero so it only
-                 appears when the hero is in view. -->
+             appears when the hero is in view. -->
             <div id="star-counter" class="star-counter">
                 Stars collected: <span id="star-count-value">0</span>
             </div>
         </section>
 
-        <section id="about" class="about">
-            <div class="container">
-                <div class="about-layout">
-                    <div class="about-content">
-                        <h2>About</h2>
-                        <p>
-                            I got into games early and eventually realized I wanted to build them, not just play them.
-                            I started studying game development in high school, and I’m now several years into my journey,
-                            close to finishing my bachelor’s degree. I enjoy working across programming and design, and I
-                            like owning systems end-to-end: gameplay, cameras, polish, and iteration.
 
-                            I also enjoy iterating on ideas in motivated and driven teams, I am often ambitious with my time and work focusing on creating self sustained end results.
-                        </p>
-                    </div>
-                    <div class="about-portrait">
-                        <!-- Add your portrait photo to assets/images/about-portrait.jpg -->
-                        <img src="assets/images/Picture of me.png" alt="Portrait of Alfred Johansson" />
-                    </div>
-                </div>
-
-                <div class="skills">
-
-                    <div class="skill">
-                        <h3>Tools</h3>
-                        <ul>
-                            <li>
-                                Unity
-                            <li>
-                                C#
-                            <li>
-                                Perforce / P4V
-                            <li>
-                                Github
-                            <li>
-                                Figma
-                            <li>
-                                ChatGPT
-                        </ul>
-                    </div>
-
-                    <div class="skill">
-                        <h3>Skills</h3>
-                        <ul>
-                            <li>
-                                Teamwork
-                            <li>
-                                Creative Problem solving
-                            <li>
-                                Team Leadership
-                            <li>
-                                Team collaboration
-                            <li>
-                                DevOps
-                            <li>
-                                Scrum
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <section id="projects" class="projects">
             <div class="container">
@@ -374,6 +316,53 @@
             </div>
         </section>
 
+        <section id="about" class="about">
+            <div class="container">
+                <div class="about-layout">
+                    <div class="about-content">
+                        <h2>About me</h2>
+                        <p>
+                            I got into games early and eventually realized I wanted to build them, not just play them.
+                            I started studying game development in high school, and I’m now several years into my journey,
+                            close to finishing my bachelor’s degree. I enjoy working across programming and design, and I
+                            like owning systems end-to-end: gameplay, cameras, polish, and iteration.
+
+                            I also enjoy iterating on ideas in motivated and driven teams, I am often ambitious with my time and work focusing on creating self sustained end results.
+                        </p>
+                    </div>
+                    <div class="about-portrait">
+                        <!-- Add your portrait photo to assets/images/about-portrait.jpg -->
+                        <img src="assets/images/Picture of me.png" alt="Portrait of Alfred Johansson" />
+                    </div>
+                </div>
+
+                <div class="skills">
+                    <div class="skill">
+                        <h3>Tools</h3>
+                        <ul>
+                            <li>Unity</li>
+                            <li>C#</li>
+                            <li>Perforce / P4V</li>
+                            <li>Github</li>
+                            <li>Figma</li>
+                            <li>ChatGPT</li>
+                        </ul>
+                    </div>
+
+                    <div class="skill">
+                        <h3>Skills</h3>
+                        <ul>
+                            <li>Teamwork</li>
+                            <li>Creative problem solving</li>
+                            <li>Team leadership</li>
+                            <li>Team collaboration</li>
+                            <li>DevOps</li>
+                            <li>Scrum</li>
+                        </ul>
+                    </div>
+                </div>
+        </section>
+
         <section id="resume" class="resume">
             <div class="container">
                 <h2>Resume</h2>
@@ -390,7 +379,7 @@
         <section id="contact" class="contact">
             <div class="container">
                 <h2>Contact</h2>
-                <p>Interested in my work or just want to say hello? Feel free to reach out!</p>
+                <p>Interested in my work or just want to brag about how many stars you collected? Feel free to reach out!</p>
 
                 <ul class="contact-links">
                     <li>
@@ -404,7 +393,7 @@
 
                     <li>
                         <a href="https://www.linkedin.com/in/alfred-johansson-351213204" target="_blank" rel="noopener noreferrer">
-                           
+
                             <svg class="icon" aria-hidden="true">
                                 <use href="#icon-linkedin" xlink:href="#icon-linkedin"></use>
                             </svg>
@@ -426,6 +415,8 @@
                 <p class="contact-location">Stockholm, Sweden</p>
             </div>
         </section>
+
+
     </main>
 
     <footer class="footer">
