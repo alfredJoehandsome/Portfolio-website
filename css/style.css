@@ -420,7 +420,7 @@ h2 {
 /* Featured project card: elevated but restrained emphasis without hover dependency. */
 .project-card--featured {
     /* Slightly brighter surface keeps the same palette while lifting importance. */
-    background: #141a24;
+    background: #252830;
     /* Thicker, tasteful border to signal "featured" at a glance. */
     border: 2px solid rgba(199, 120, 221, 0.25);
     /* Mild glow to separate from the grid without overpowering. */
