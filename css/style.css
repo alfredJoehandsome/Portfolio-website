@@ -529,6 +529,16 @@ h2 {
         fill: currentColor;
     }
 
+.project-status {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--secondary);
+    border: 1px solid var(--secondary);
+    border-radius: 999px;
+    padding: 0.15rem 0.65rem;
+    white-space: nowrap;
+}
+
 .project-popover {
     position: absolute;
     top: 1rem;
@@ -578,6 +588,15 @@ h2 {
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* Single-media variant: one wide gif/screenshot instead of the 2-column grid */
+.project-popover__images--single {
+    grid-template-columns: 1fr;
+}
+
+    .project-popover__images--single img {
+        height: auto;
+    }
+
 .project-popover__details {
     list-style: none;
     display: grid;
@@ -619,6 +638,144 @@ h2 {
 }
 
 
+
+/* Experience Section */
+.experience {
+    background: var(--surface-dark);
+}
+
+.exp-list {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 860px;
+}
+
+.exp-item {
+    display: grid;
+    grid-template-columns: 168px 1fr;
+    gap: 1.5rem;
+    background: var(--surface-light);
+    border: 1px solid transparent;
+    border-left: 3px solid rgba(199, 120, 221, 0.4);
+    border-radius: 8px;
+    padding: 1.4rem 1.6rem;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+    .exp-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55);
+        border-color: var(--primary);
+    }
+
+.exp-item--current {
+    background: #1b2230;
+    border-left-color: var(--secondary);
+}
+
+.exp-period {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.exp-dates {
+    color: var(--heading);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.exp-place {
+    color: var(--text);
+    font-size: 0.8rem;
+}
+
+.exp-badge {
+    display: inline-block;
+    width: fit-content;
+    margin-top: 0.45rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    border: 1px solid var(--secondary);
+    border-radius: 999px;
+    padding: 0.12rem 0.55rem;
+}
+
+.exp-body h3 {
+    color: var(--heading);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.exp-company {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.exp-body > p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.85rem;
+}
+
+.exp-points {
+    list-style: none;
+    display: grid;
+    gap: 0.4rem;
+    margin-bottom: 0.95rem;
+}
+
+    .exp-points li {
+        position: relative;
+        padding-left: 1rem;
+        font-size: 0.88rem;
+        line-height: 1.45;
+    }
+
+        .exp-points li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.55rem;
+            width: 0.4rem;
+            height: 0.4rem;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+.exp-tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+    .exp-tags li {
+        font-size: 0.72rem;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 999px;
+        padding: 0.16rem 0.6rem;
+    }
+
+@media (max-width: 640px) {
+    .exp-item {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .exp-period {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+    }
+}
 
 /* Resume Section */
 .resume {
