@@ -1,6 +1,19 @@
 // Basic interactivity for the portfolio site
 
 // ---------------------------------------------------------
+// Clickjacking guard: if this page is loaded inside a frame from another
+// origin, break out of it. Frame headers cannot be set on static hosting,
+// so this protection runs client side.
+// ---------------------------------------------------------
+try {
+    if (window.top !== window.self) {
+        window.top.location = window.self.location;
+    }
+} catch (e) {
+    document.documentElement.style.visibility = 'hidden';
+}
+
+// ---------------------------------------------------------
 // Mobile navigation toggle (hamburger menu on small screens)
 // ---------------------------------------------------------
 
@@ -237,17 +250,22 @@ if (revealElements.length > 0) {
         setInterval(spawnStar, 1300);
     }
 
-    function spawnFirework(x, y) {
-        // Drop the oldest burst if we are already at the cap.
-        if (fireworks.length >= MAX_FIREWORKS) {
+    function spawnFirework(x, y, force, big) {
+        // Normally cap concurrent bursts. The celebration finale passes force
+        // to bypass that cap, with a higher hard limit purely for safety.
+        if (force) {
+            if (fireworks.length >= 40) {
+                fireworks.shift();
+            }
+        } else if (fireworks.length >= MAX_FIREWORKS) {
             fireworks.shift();
         }
-        // Fewer particles per burst keeps the effect cheap to render.
-        const numParticles = 16;
+        // Bigger, punchier bursts for the finale pops.
+        const numParticles = big ? 26 : 16;
         const particles = [];
         for (let i = 0; i < numParticles; i++) {
             const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 3 + 4;
+            const speed = Math.random() * (big ? 4.5 : 3) + 4;
             const colour = STAR_COLOURS[Math.floor(Math.random() * STAR_COLOURS.length)];
             particles.push({
                 x: x,
@@ -260,6 +278,56 @@ if (revealElements.length > 0) {
             });
         }
         fireworks.push(particles);
+    }
+
+    let celebrating = false;
+
+    // Reward: each time the collected count reaches a multiple of 10, a wave of
+    // stars rains across the screen and then pops in a staggered cascade.
+    function celebrate() {
+        if (celebrating) {
+            return;
+        }
+        celebrating = true;
+        const count = 22;
+        const created = [];
+        for (let i = 0; i < count; i++) {
+            const size = Math.random() * 3 + 4;
+            const x = (width / (count + 1)) * (i + 1) + (Math.random() * 26 - 13);
+            const y = -20 - Math.random() * 120;
+            const colour = STAR_COLOURS[Math.floor(Math.random() * STAR_COLOURS.length)];
+            const r = parseInt(colour.substr(1, 2), 16);
+            const g = parseInt(colour.substr(3, 2), 16);
+            const b = parseInt(colour.substr(5, 2), 16);
+            const star = {
+                x: x,
+                y: y,
+                size: size,
+                vx: Math.random() * 0.8 - 0.4,
+                vy: Math.random() * 2 + 3.5,
+                colour: colour,
+                r: r,
+                g: g,
+                b: b,
+                trail: []
+            };
+            stars.push(star);
+            created.push(star);
+        }
+        // Stagger each pop so the wave bursts as a satisfying cascade.
+        created.forEach((star, i) => {
+            window.setTimeout(() => {
+                const idx = stars.indexOf(star);
+                if (idx !== -1) {
+                    stars.splice(idx, 1);
+                    spawnFirework(star.x, star.y, true, true);
+                }
+            }, 450 + i * 60 + Math.random() * 140);
+        });
+        // Allow the next celebration once this one has finished.
+        window.setTimeout(() => {
+            celebrating = false;
+        }, 450 + count * 60 + 1400);
     }
 
     document.addEventListener('click', (event) => {
@@ -287,6 +355,10 @@ if (revealElements.length > 0) {
                     starCountValueEl.textContent = starsCollected;
                 }
                 spawnFirework(cx, cy);
+                // Every tenth star triggers the falling star reward.
+                if (starsCollected % 10 === 0) {
+                    celebrate();
+                }
                 break;
             }
         }
@@ -426,6 +498,42 @@ if (revealElements.length > 0) {
     hero.addEventListener('pointerleave', () => {
         glow.style.opacity = '0';
     });
+})();
+
+// ---------------------------------------------------------
+// Cookie notice: show until the visitor accepts or declines,
+// then remember the choice in local storage.
+// ---------------------------------------------------------
+(function () {
+    const banner = document.getElementById('cookie-banner');
+    if (!banner) {
+        return;
+    }
+    let stored = null;
+    try {
+        stored = localStorage.getItem('cookieConsent');
+    } catch (e) {
+        stored = null;
+    }
+    if (!stored) {
+        banner.hidden = false;
+    }
+    function setConsent(value) {
+        try {
+            localStorage.setItem('cookieConsent', value);
+        } catch (e) {
+            // Local storage may be unavailable; hide the banner regardless.
+        }
+        banner.hidden = true;
+    }
+    const accept = document.getElementById('cookie-accept');
+    const decline = document.getElementById('cookie-decline');
+    if (accept) {
+        accept.addEventListener('click', () => setConsent('accepted'));
+    }
+    if (decline) {
+        decline.addEventListener('click', () => setConsent('declined'));
+    }
 })();
 
 // ---------------------------------------------------------

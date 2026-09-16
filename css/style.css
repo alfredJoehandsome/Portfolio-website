@@ -1242,66 +1242,6 @@ h2::after {
    Handmade touches: handwritten notes, taped photos.
    ========================================================= */
 
-/* Handwritten note in the hero pointing at the star minigame */
-.hero-note {
-    display: inline-flex;
-    align-items: flex-start;
-    gap: 0.4rem;
-    margin-top: 2rem;
-    font-family: 'Caveat', cursive;
-    font-size: 1.35rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.55);
-    transform: rotate(-2deg);
-    user-select: none;
-}
-
-.hero-note__arrow {
-    width: 44px;
-    height: 34px;
-    margin-top: 0.4rem;
-    color: rgba(255, 255, 255, 0.4);
-}
-
-/* About portrait: taped-up photo instead of a floating card */
-.about-portrait {
-    transform: rotate(-2deg);
-    border: 6px solid #fff;
-    border-radius: 4px;
-    overflow: visible;
-}
-
-.about-portrait::after {
-    /* replace the old red square with a strip of tape */
-    content: '';
-    position: absolute;
-    top: -14px;
-    left: 50%;
-    bottom: auto;
-    width: 92px;
-    height: 26px;
-    background: rgba(240, 238, 234, 0.28);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 2px;
-    transform: translateX(-50%) rotate(3deg);
-    z-index: 2;
-}
-
-.about-portrait img {
-    border-radius: 2px;
-}
-
-.portrait-caption {
-    position: absolute;
-    bottom: -2.4rem;
-    left: 50%;
-    transform: translateX(-50%) rotate(-3deg);
-    font-family: 'Caveat', cursive;
-    font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.6);
-    white-space: nowrap;
-}
-
 /* Popover screenshots styled like small taped-in photos */
 .project-popover__images img {
     border: 3px solid #fff;
@@ -1322,16 +1262,127 @@ h2::after {
     transform: rotate(-3deg);
 }
 
-/* Small aside note in the stats */
-.stat-note {
-    font-family: 'Caveat', cursive;
-    font-size: 1.05rem;
-    color: rgba(255, 255, 255, 0.45);
-    white-space: nowrap;
-}
-
 @media (max-width: 960px) {
     .about-portrait {
         margin-bottom: 2.2rem;
     }
+}
+
+/* =========================================================
+   Cookie notice
+   ========================================================= */
+.cookie-banner {
+    position: fixed;
+    left: 50%;
+    bottom: 1.2rem;
+    transform: translateX(-50%);
+    z-index: 2000;
+    width: min(720px, calc(100% - 2rem));
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    background: rgba(26, 26, 29, 0.98);
+    border: 1px solid var(--line-dark);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+}
+
+.cookie-banner[hidden] {
+    display: none;
+}
+
+.cookie-banner__text {
+    flex: 1 1 260px;
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--on-dark-soft);
+}
+
+.cookie-banner__text a {
+    color: var(--red);
+}
+
+.cookie-banner__actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+.cookie-btn {
+    padding: 0.5rem 1.15rem;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 520px) {
+    .cookie-banner__actions {
+        width: 100%;
+    }
+
+    .cookie-btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+/* =========================================================
+   Legal page (terms and privacy)
+   ========================================================= */
+.nav-back {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.nav-back:hover {
+    color: #fff;
+}
+
+.legal-main {
+    padding-top: 66px;
+    background: var(--bg);
+    min-height: 100vh;
+}
+
+.legal {
+    max-width: 760px;
+    padding-top: 3.5rem;
+    padding-bottom: 4.5rem;
+}
+
+.legal h1 {
+    font-size: clamp(2rem, 4vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin: 0.6rem 0 0.5rem;
+}
+
+.legal h2 {
+    margin-top: 2.6rem;
+}
+
+.legal h3 {
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 1.7rem;
+    margin-bottom: 0.5rem;
+}
+
+.legal-updated {
+    color: var(--on-dark-soft);
+    font-size: 0.9rem;
+    margin-bottom: 1.75rem;
+}
+
+.legal p {
+    color: var(--on-dark-soft);
+    margin-bottom: 1rem;
+}
+
+.legal a {
+    color: var(--red);
 }
