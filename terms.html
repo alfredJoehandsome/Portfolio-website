@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#181818" />
     <title>Terms &amp; Privacy | Alfred Johansson</title>
     <meta name="description" content="Terms of service and privacy notice for alfredjohansson.fyi, the portfolio of Alfred Johansson." />
 
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Public+Sans:wght@400;500;600;700&display=swap"
           rel="stylesheet" />
 
     <link rel="stylesheet" href="css/style.css" />
@@ -18,20 +20,16 @@
 
 <body>
     <header class="navbar">
-        <div class="container">
-            <a class="logo" href="index.html#hero">
-                <span class="logo-name">Alfred Johansson</span>
-                <span class="logo-sub">Designer &amp; Developer</span>
-            </a>
-            <a class="nav-back" href="index.html">Back to site</a>
+        <div class="navbar__inner">
+            <a class="logo" href="index.html#start">Alfred Johansson</a>
+            <a class="btn btn--secondary btn--sm" href="index.html">Back to site</a>
         </div>
     </header>
 
     <main class="legal-main">
-        <div class="container legal">
-            <span class="kicker">Legal</span>
+        <div class="legal">
             <h1>Terms &amp; Privacy</h1>
-            <p class="legal-updated">Last updated 17 September 2026</p>
+            <p class="legal-updated">Last updated 9 November 2026</p>
 
             <h2>Terms of service</h2>
             <p>This website, alfredjohansson.fyi, is the personal portfolio of Alfred Johansson. By visiting and using the site you agree to these terms. If you do not agree, please do not use the site.</p>
@@ -52,7 +50,7 @@
             <p>I care about your privacy and collect as little as possible.</p>
 
             <h3>Cookies and local storage</h3>
-            <p>This site does not use tracking or advertising cookies. It stores a single value in your browser's local storage to remember your cookie choice, so the notice does not appear on every visit. You can clear this at any time through your browser settings.</p>
+            <p>This site does not use tracking or advertising cookies. It stores a couple of values in your browser's local storage: your cookie choice, so the notice does not appear on every visit, and the hat you picked for the stickman. You can clear these at any time through your browser settings.</p>
 
             <h3>Fonts</h3>
             <p>The site loads fonts from Google Fonts. When it does, Google may receive your IP address as part of serving those files. No other information is shared with them.</p>
@@ -65,23 +63,21 @@
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; <span id="year"></span> Alfred Johansson &middot; <a href="index.html">Back to site</a></p>
-        </div>
+    <footer class="legal-footer">
+        <p>&copy; <span id="year"></span> Alfred Johansson &middot; <a href="index.html">Back to site</a></p>
     </footer>
 
     <!-- Cookie notice -->
     <div id="cookie-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice" hidden>
         <p class="cookie-banner__text">
-            This site uses only essential local storage to remember your preferences. It has no tracking or advertising cookies. Read the <a href="terms.html">terms and privacy</a>.
+            This site uses only essential local storage to remember your preferences, such as your cookie choice and the hat you picked for the stickman. It has no tracking or advertising cookies. Read the <a href="terms.html">terms and privacy</a>.
         </p>
         <div class="cookie-banner__actions">
-            <button type="button" class="btn-outline cookie-btn" id="cookie-decline">Decline</button>
-            <button type="button" class="btn cookie-btn" id="cookie-accept">Accept</button>
+            <button type="button" class="btn btn--secondary btn--sm" id="cookie-decline">Decline</button>
+            <button type="button" class="btn btn--primary btn--sm" id="cookie-accept">Accept</button>
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <script src="js/script.js" defer></script>
 </body>
 </html>

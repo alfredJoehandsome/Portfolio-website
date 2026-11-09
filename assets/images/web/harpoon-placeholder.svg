@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Harpoon placeholder artwork">
+    <rect width="800" height="450" fill="#26262b"/>
+    <g opacity="0.5" fill="#ffffff">
+        <circle cx="120" cy="90" r="1.6"/>
+        <circle cx="250" cy="150" r="1.4"/>
+        <circle cx="680" cy="110" r="1.6"/>
+        <circle cx="600" cy="330" r="1.4"/>
+        <circle cx="160" cy="360" r="1.4"/>
+        <circle cx="720" cy="250" r="1.4"/>
+    </g>
+    <g fill="none" stroke="#c0392b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="400" y1="120" x2="400" y2="176"/>
+        <path d="M400 96 L384 132 L400 122 L416 132 Z" fill="#c0392b" stroke="none"/>
+        <path d="M400 138 L380 128"/>
+        <path d="M400 138 L420 128"/>
+    </g>
+    <text x="400" y="258" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-size="66" font-weight="800" letter-spacing="7" fill="#ffffff">HARPOON</text>
+    <rect x="356" y="284" width="88" height="5" rx="2.5" fill="#c0392b"/>
+    <text x="400" y="330" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="21" letter-spacing="4" fill="#9a9a9a">UNITY 6 &#183; SOLO PROJECT</text>
+</svg>
