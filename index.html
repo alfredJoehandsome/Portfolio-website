@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <meta name="theme-color" content="#181818" />
+    <meta name="theme-color" content="#ffffff" />
     <title>Alfred Johansson | Designer &amp; Developer</title>
     <meta name="description" content="Alfred Johansson, designer and developer. C# and object-oriented development, shipped a game on Steam with 25,000+ copies, currently technical lead of a 12 person team." />
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Public+Sans:wght@400;500;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap"
           rel="stylesheet" />
 
     <link rel="stylesheet" href="css/style.css" />
@@ -113,14 +113,33 @@
             </div>
 
             <div class="creator" aria-labelledby="creator-title">
-                <p class="creator__title" id="creator-title">Build your stickman</p>
-                <div class="creator__preview" data-stickman-preview></div>
-                <div class="creator__controls">
-                    <button type="button" class="btn btn--secondary btn--sm" data-hat-prev aria-label="Previous hat">
+                <p class="creator__title" id="creator-title">Build your character</p>
+                <div class="creator__preview" data-character-preview></div>
+                <div class="creator__row">
+                    <span class="creator__label" id="face-label">Face</span>
+                    <button type="button" class="btn btn--secondary btn--sm btn--icon" data-face-prev aria-label="Previous face">
                         <svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg>
                     </button>
-                    <span class="creator__name" data-hat-name aria-live="polite">Cap</span>
-                    <button type="button" class="btn btn--secondary btn--sm" data-hat-next aria-label="Next hat">
+                    <span class="creator__name" data-face-name aria-live="polite" aria-labelledby="face-label">Happy</span>
+                    <button type="button" class="btn btn--secondary btn--sm btn--icon" data-face-next aria-label="Next face">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+                    </button>
+                </div>
+                <div class="creator__row">
+                    <span class="creator__label" id="shirt-label">Shirt</span>
+                    <div class="swatches" role="group" aria-labelledby="shirt-label" data-shirts></div>
+                </div>
+                <div class="creator__row">
+                    <span class="creator__label" id="pants-label">Pants</span>
+                    <div class="swatches" role="group" aria-labelledby="pants-label" data-pants></div>
+                </div>
+                <div class="creator__row">
+                    <span class="creator__label" id="hat-label">Hat</span>
+                    <button type="button" class="btn btn--secondary btn--sm btn--icon" data-hat-prev aria-label="Previous hat">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg>
+                    </button>
+                    <span class="creator__name" data-hat-name aria-live="polite" aria-labelledby="hat-label">Propeller beanie</span>
+                    <button type="button" class="btn btn--secondary btn--sm btn--icon" data-hat-next aria-label="Next hat">
                         <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
                     </button>
                 </div>
@@ -484,7 +503,7 @@
     <!-- Cookie notice -->
     <div id="cookie-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice" hidden>
         <p class="cookie-banner__text">
-            This site uses only essential local storage to remember your preferences, such as your cookie choice and the hat you picked for the stickman. It has no tracking or advertising cookies. Read the <a href="terms.html">terms and privacy</a>.
+            This site uses only essential local storage to remember your preferences, such as your cookie choice and the character you made. It has no tracking or advertising cookies. Read the <a href="terms.html">terms and privacy</a>.
         </p>
         <div class="cookie-banner__actions">
             <button type="button" class="btn btn--secondary btn--sm" id="cookie-decline">Decline</button>
@@ -492,8 +511,9 @@
         </div>
     </div>
 
+    <div class="loader" aria-hidden="true"><span class="loader__flower"></span></div>
+
+    <script type="module" src="js/world3d/main.js"></script>
     <script src="js/script.js" defer></script>
-    <script src="js/character.js" defer></script>
-    <script src="js/world.js" defer></script>
 </body>
 </html>
