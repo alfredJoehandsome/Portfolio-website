@@ -135,7 +135,16 @@ function build(startIndex) {
         fitNavRow(vw);
     }
     const navRow = document.querySelector('.nav-links');
-    const navBottom = navRow ? navRow.getBoundingClientRect().bottom : 52;
+    let navBottom = navRow ? navRow.getBoundingClientRect().bottom : 52;
+    // The AI disclaimer is always visible. On phones it sits right under the nav row,
+    // so the boards start below it.
+    const aiNote = document.querySelector('.ai-note');
+    if (aiNote) {
+        aiNote.style.top = compact ? Math.round(navBottom + 6) + 'px' : '';
+        if (compact) {
+            navBottom = Math.max(navBottom, aiNote.getBoundingClientRect().bottom);
+        }
+    }
 
     const L = makeLayout({ vw, vh, compact, count, navBottom, dpr });
     main.style.setProperty('--board-w', L.boardW + 'px');

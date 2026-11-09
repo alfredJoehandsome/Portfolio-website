@@ -842,6 +842,12 @@ main {
     font-size: 0.9375rem;
 }
 
+.footer__note {
+    margin-top: var(--s-2);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
 /* ==========================================================================
    Character creator (start board)
    ========================================================================== */
@@ -2743,5 +2749,63 @@ html.world-mode .lightbox.sign .lightbox__next {
         box-shadow: 0 0 18px 6px rgba(74, 168, 224, 0.5);
         outline: 2px solid rgba(10, 120, 184, 0.9);
         outline-offset: 4px;
+    }
+}
+
+/* ==========================================================================
+   AI disclaimer: always visible in every mode
+   ========================================================================== */
+.ai-note {
+    position: fixed;
+    right: var(--s-4);
+    bottom: var(--s-4);
+    z-index: 30;
+    max-width: 320px;
+    margin: 0;
+    padding: 6px 12px;
+    background: var(--white);
+    border: 2px solid var(--line);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: right;
+    pointer-events: none;
+}
+
+/* 3D desktop: stacked above the minimap in the bottom right corner. */
+html.world-mode .ai-note {
+    bottom: calc(var(--s-4) + 84px + 8px);
+}
+
+/* 3D phones: a slim line right under the nav row (world.js places it and keeps
+   the boards below it). */
+html.world-compact .ai-note {
+    top: 48px;
+    bottom: auto;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100vw - 24px);
+    padding: 3px 10px;
+    text-align: center;
+}
+
+/* Plain page on small screens: a slim bar along the bottom edge. */
+@media (max-width: 640px) {
+    html:not(.world-mode) .ai-note {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        max-width: none;
+        border-width: 2px 0 0;
+        border-radius: 0;
+        text-align: center;
+    }
+
+    html:not(.world-mode) body {
+        padding-bottom: 64px;
     }
 }
