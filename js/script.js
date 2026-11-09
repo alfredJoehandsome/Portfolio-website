@@ -1,4 +1,4 @@
-// Basic interactivity for the portfolio site: cookie notice, menu, year.
+// Basic interactivity for the portfolio site: menu, year, project dialogs.
 
 // Lets the stylesheet tell a scripted page from a plain one.
 document.documentElement.classList.add('js');
@@ -61,42 +61,6 @@ const yearSpan = document.getElementById('year');
 if (yearSpan) {
     yearSpan.textContent = new Date().getFullYear();
 }
-
-// ---------------------------------------------------------
-// Cookie notice: show until the visitor accepts or declines,
-// then remember the choice in local storage.
-// ---------------------------------------------------------
-(function () {
-    const banner = document.getElementById('cookie-banner');
-    if (!banner) {
-        return;
-    }
-    let stored = null;
-    try {
-        stored = localStorage.getItem('cookieConsent');
-    } catch (e) {
-        stored = null;
-    }
-    if (!stored) {
-        banner.hidden = false;
-    }
-    function setConsent(value) {
-        try {
-            localStorage.setItem('cookieConsent', value);
-        } catch (e) {
-            // Local storage may be unavailable; hide the banner regardless.
-        }
-        banner.hidden = true;
-    }
-    const accept = document.getElementById('cookie-accept');
-    const decline = document.getElementById('cookie-decline');
-    if (accept) {
-        accept.addEventListener('click', () => setConsent('accepted'));
-    }
-    if (decline) {
-        decline.addEventListener('click', () => setConsent('declined'));
-    }
-})();
 
 // ---------------------------------------------------------
 // Project dialogs: native <dialog>. Esc closes it natively, focus goes

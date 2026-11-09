@@ -179,7 +179,7 @@ export function buildIsland(ctx, L, options) {
     group.add(below);
 
     // Pebbles on and beside the path.
-    const pebbleCount = phone ? 36 : 64;
+    const pebbleCount = phone ? 18 : 64;
     const pebbleGeo = new THREE.SphereGeometry(1, 8, 6);
     const pebbles = new THREE.InstancedMesh(pebbleGeo, toon(0xffffff), pebbleCount);
     const m4 = new THREE.Matrix4();
@@ -241,7 +241,7 @@ export function buildIsland(ctx, L, options) {
 
     const pastel = [0xff9ec7, 0xffd84d, 0x9fd8ff, 0xc9a7ff, 0xa6e8c4];
     function block(x, z, size, tint, spin) {
-        const g = paint(trim(new RoundedBoxGeometry(size, size * 0.9, size, 3, size * 0.2)), tint);
+        const g = paint(trim(new RoundedBoxGeometry(size, size * 0.9, size, 2, size * 0.03)), tint);
         g.rotateY(spin);
         g.translate(x, size * 0.45, z);
         pieces.push(g);
@@ -253,7 +253,7 @@ export function buildIsland(ctx, L, options) {
         for (let i = 0; i < count; i++) {
             const gx = x + Math.cos(spin) * i * 0.9 * u + Math.sin(i * 2.1) * 0.12 * u;
             const gz = z - Math.sin(spin) * i * 0.9 * u + Math.cos(i * 1.7) * 0.12 * u;
-            const g = paint(trim(new RoundedBoxGeometry(0.62 * u, 0.12 * u, 0.62 * u, 2, 0.05 * u)), 0xd9e6ee);
+            const g = paint(trim(new RoundedBoxGeometry(0.62 * u, 0.12 * u, 0.62 * u, 2, 0.01 * u)), 0xd9e6ee);
             g.rotateY(i * 0.7);
             g.translate(gx, 0.05 * u, gz);
             pieces.push(g);
@@ -327,7 +327,7 @@ export function buildIsland(ctx, L, options) {
     group.add(shade);
 
     // Tufts of grass: little cones, instanced.
-    const tuftCount = phone ? 160 : 320;
+    const tuftCount = phone ? 80 : 320;
     const tuftGeo = new THREE.ConeGeometry(0.06 * u, 0.24 * u, 5);
     tuftGeo.translate(0, 0.12 * u, 0);
     const tufts = new THREE.InstancedMesh(tuftGeo, toon(0xffffff), tuftCount * 3);

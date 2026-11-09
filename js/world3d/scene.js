@@ -12,7 +12,15 @@ export function webglAvailable() {
     try {
         const canvas = document.createElement('canvas');
         const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-        return !!gl;
+        if (!gl) {
+            return false;
+        }
+        // Do not leave the probe's context alive: phones allow very few.
+        const lose = gl.getExtension('WEBGL_lose_context');
+        if (lose) {
+            lose.loseContext();
+        }
+        return true;
     } catch (e) {
         return false;
     }
@@ -122,6 +130,55 @@ function buildSkyDome(L) {
     return mesh;
 }
 
+// ONE WebGL context for the whole page, reused across rebuilds (phones kill tabs that
+// hold several). The creator preview draws through this same renderer.
+let shared = null;
+let lostHandler = null;
+
+export function onContextLost(fn) {
+    lostHandler = fn;
+}
+
+function getRenderer(L) {
+    if (!shared) {
+        shared = new THREE.WebGLRenderer({
+            antialias: !L.compact,
+            alpha: true,
+            premultipliedAlpha: true,
+            powerPreference: L.compact ? 'default' : 'high-performance'
+        });
+        shared.setClearColor(0xffffff, 1);
+        shared.outputColorSpace = THREE.SRGBColorSpace;
+        shared.toneMapping = THREE.NoToneMapping;
+        shared.shadowMap.enabled = false;
+        shared.domElement.className = 'stage__gl';
+        shared.domElement.setAttribute('aria-hidden', 'true');
+        shared.domElement.addEventListener('webglcontextlost', (event) => {
+            event.preventDefault();
+            if (lostHandler) {
+                lostHandler();
+            }
+        });
+    }
+    return shared;
+}
+
+export function destroyRenderer() {
+    if (!shared) {
+        return;
+    }
+    const gl = shared;
+    shared = null;
+    lostHandler = null;     // forcing the loss below must not look like a lost context
+    try {
+        gl.dispose();
+        gl.forceContextLoss();
+    } catch (e) {
+        // Already lost.
+    }
+    gl.domElement.remove();
+}
+
 export function createStage(host, L) {
     const stage = document.createElement('div');
     stage.className = 'stage';
@@ -131,19 +188,8 @@ export function createStage(host, L) {
 
     const css = new CSS3DRenderer({ element: cssLayer });
 
-    const gl = new THREE.WebGLRenderer({
-        antialias: true,
-        alpha: true,
-        premultipliedAlpha: true,
-        powerPreference: 'high-performance'
-    });
-    gl.setClearColor(0xffffff, 1);
-    gl.outputColorSpace = THREE.SRGBColorSpace;
-    gl.toneMapping = THREE.NoToneMapping;
-    gl.shadowMap.enabled = false;
+    const gl = getRenderer(L);
     const canvas = gl.domElement;
-    canvas.className = 'stage__gl';
-    canvas.setAttribute('aria-hidden', 'true');
     stage.appendChild(canvas);
     host.appendChild(stage);
 
@@ -189,12 +235,8 @@ export function createStage(host, L) {
             }
         });
         disposeShared();
-        gl.dispose();
-        try {
-            gl.forceContextLoss();
-        } catch (e) {
-            // Already lost.
-        }
+        // The renderer (the one WebGL context) is kept for rebuilds; see destroyRenderer.
+        gl.renderLists.dispose();
         stage.remove();
     }
 

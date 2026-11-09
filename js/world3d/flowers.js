@@ -62,7 +62,7 @@ function headMaterial() {
 
 export function buildFlowers(ctx, L, obstacles) {
     const phone = L.compact;
-    const total = phone ? 70 : 120;
+    const total = phone ? 35 : 120;
     const u = L.Hc;
     const rand = rng(7771);
     const group = new THREE.Group();

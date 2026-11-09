@@ -1,3 +1,35 @@
+@font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../assets/fonts/lexend-400.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("../assets/fonts/lexend-500.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("../assets/fonts/lexend-600.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("../assets/fonts/lexend-700.woff2") format("woff2");
+}
+
 /* ==========================================================================
    Tokens: bright, white, soft and round
    ========================================================================== */
@@ -16,7 +48,7 @@
     --glow: rgba(52, 191, 239, 0.18);
     --focus: #34bfef;
 
-    --font: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Arial Rounded MT Bold", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font: "Lexend", system-ui, -apple-system, "Segoe UI", sans-serif;
 
     --s-1: 4px;
     --s-2: 8px;
@@ -27,8 +59,8 @@
     --s-7: 48px;
     --s-8: 64px;
 
-    --radius: 24px;
-    --radius-img: 14px;
+    --radius: 6px;
+    --radius-img: 4px;
     --nav-h: 64px;
     --board-pad: 28px;
 }
@@ -53,7 +85,7 @@ body {
     background: var(--bg);
     color: var(--ink);
     font-family: var(--font);
-    font-size: 1rem;
+    font-size: 1.0625rem;
     line-height: 1.6;
     font-weight: 400;
     overflow-x: hidden;
@@ -105,8 +137,7 @@ a {
     outline: none;
 }
 
-[hidden],
-.cookie-banner[hidden] {
+[hidden] {
     display: none;
 }
 
@@ -115,7 +146,7 @@ a {
    ========================================================================== */
 h1,
 h2 {
-    font-weight: 800;
+    font-weight: 600;
     line-height: 1.15;
     letter-spacing: 0;
 }
@@ -129,7 +160,7 @@ h2 {
 }
 
 h3 {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     line-height: 1.3;
     font-weight: 700;
 }
@@ -148,7 +179,6 @@ small,
 .text-link,
 .footer a,
 .legal-footer a,
-.cookie-banner a,
 .legal a {
     color: var(--blue);
     font-weight: 500;
@@ -162,7 +192,6 @@ small,
 .text-link:hover,
 .footer a:hover,
 .legal-footer a:hover,
-.cookie-banner a:hover,
 .legal a:hover {
     text-decoration-color: var(--blue);
 }
@@ -192,7 +221,7 @@ small,
     gap: 8px;
     min-height: 44px;
     padding: 0 22px;
-    border-radius: 999px;
+    border-radius: 6px;
     border: 2px solid var(--btn-line);
     background: var(--white);
     color: var(--ink);
@@ -271,7 +300,7 @@ small,
 
 .logo {
     font-size: 1.125rem;
-    font-weight: 800;
+    font-weight: 600;
     text-decoration: none;
 }
 
@@ -377,7 +406,7 @@ main {
     background: var(--white);
     border: 2px solid var(--line);
     border-radius: var(--radius);
-    font-size: 1rem;
+    font-size: 1.0625rem;
     line-height: 1.6;
 }
 
@@ -386,7 +415,7 @@ main {
 }
 
 .board__title {
-    font-size: clamp(1.5rem, 2.4vw, 2.125rem);
+    font-size: 2rem;
 }
 
 .board__head {
@@ -403,7 +432,7 @@ main {
 
 .meta {
     color: var(--muted);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
 }
 
 .frame {
@@ -506,7 +535,7 @@ main {
 
 .hero-facts dd {
     font-size: 1.625rem;
-    font-weight: 800;
+    font-weight: 600;
     line-height: 1.2;
 }
 
@@ -785,7 +814,7 @@ main {
 .contact-email {
     color: var(--blue);
     font-size: clamp(1.25rem, 2.2vw, 1.75rem);
-    font-weight: 800;
+    font-weight: 600;
     text-decoration: underline;
     text-decoration-color: var(--sky);
     text-decoration-thickness: 3px;
@@ -823,7 +852,7 @@ main {
     padding: var(--s-3) var(--s-4) var(--s-4);
     background: #f8fbfd;
     border: 2px solid var(--line);
-    border-radius: 20px;
+    border-radius: 6px;
 }
 
 .creator__title {
@@ -835,8 +864,8 @@ main {
 
 .creator__preview {
     width: 100%;
-    height: clamp(110px, 17vh, 214px);
-    border-radius: 16px;
+    height: clamp(90px, 14vh, 190px);
+    border-radius: 4px;
     background: linear-gradient(#ffffff, #eef6fb);
     overflow: hidden;
 }
@@ -845,8 +874,6 @@ main {
     display: block;
     width: 100%;
     height: 100%;
-    cursor: grab;
-    touch-action: none;
 }
 
 .creator__row {
@@ -882,7 +909,7 @@ main {
     height: 30px;
     padding: 0;
     border: 3px solid #fff;
-    border-radius: 50%;
+    border-radius: 4px;
     background: var(--swatch);
     box-shadow: 0 0 0 2px var(--btn-line);
     cursor: pointer;
@@ -959,6 +986,10 @@ html:not(.js) .project-details {
     margin-top: var(--s-6);
 }
 
+html:not(.js) .terms-dialog {
+    display: none;
+}
+
 html:not(.js) .project-dialog {
     position: static;
     display: grid;
@@ -976,36 +1007,8 @@ html:not(.js) [data-dialog-close] {
     display: none;
 }
 
-/* ==========================================================================
-   Cookie notice
-   ========================================================================== */
-.cookie-banner {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: var(--s-4);
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    gap: var(--s-5);
-    width: min(1000px, calc(100% - 32px));
-    margin: 0 auto;
-    padding: var(--s-4) var(--s-5);
-    background: var(--white);
-    border: 2px solid var(--line);
-    border-radius: var(--radius);
-}
 
-.cookie-banner__text {
-    font-size: 0.9375rem;
-    line-height: 1.5;
-}
 
-.cookie-banner__actions {
-    display: flex;
-    gap: var(--s-2);
-    flex: none;
-}
 
 /* ==========================================================================
    Terms page
@@ -1215,7 +1218,7 @@ html.world-mode .nav-links .btn--secondary[aria-current="true"] {
     padding: 5px 14px;
     background: var(--white);
     border: 2px solid var(--line);
-    border-radius: 999px;
+    border-radius: 6px;
     color: var(--ink);
     font-size: 0.875rem;
     font-weight: 700;
@@ -1225,7 +1228,7 @@ html.world-mode .nav-links .btn--secondary[aria-current="true"] {
 .hud__hint {
     color: var(--muted);
     font-weight: 500;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
 }
 
 .hud__hint.is-gone {
@@ -1241,7 +1244,7 @@ html.world-mode .nav-links .btn--secondary[aria-current="true"] {
     height: 84px;
     background: var(--white);
     border: 2px solid var(--line);
-    border-radius: 50%;
+    border-radius: 6px;
 }
 
 .minimap svg {
@@ -1353,7 +1356,7 @@ html.world-compact .nav-links--tight {
 
 html.world-compact .nav-links.nav-links--tight .btn {
     padding: 0 9px;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
 }
 
 html.world-compact .nav-links--tighter {
@@ -1362,7 +1365,7 @@ html.world-compact .nav-links--tighter {
 
 html.world-compact .nav-links.nav-links--tighter .btn {
     padding: 0 7px;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 500;
 }
 
@@ -1377,11 +1380,12 @@ html.world-compact .nav-links .btn {
     height: 34px;
     min-height: 34px;
     padding: 0 12px;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
 }
 
 html.world-compact main {
     height: var(--stage-h, 100%);
+    background: none;
 }
 
 html.world-compact .board {
@@ -1394,8 +1398,8 @@ html.world-compact .board {
     touch-action: pan-y;
     scrollbar-width: thin;
     scrollbar-color: var(--btn-line) transparent;
-    font-size: 0.9375rem;
-    line-height: 1.5;
+    font-size: 1rem;
+    line-height: 1.55;
 }
 
 html.world-compact .board:focus,
@@ -1409,11 +1413,11 @@ html.world-compact .board h1 {
 
 html.world-compact .board h2,
 html.world-compact .board .board__title {
-    font-size: 1.5rem;
+    font-size: 1.625rem;
 }
 
 html.world-compact .board h3 {
-    font-size: 1rem;
+    font-size: 1.125rem;
 }
 
 html.world-compact .meta,
@@ -1425,7 +1429,7 @@ html.world-compact .project-card p,
 html.world-compact .board__sub,
 html.world-compact .contact-location,
 html.world-compact .footer {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
 }
 
 html.world-compact .board--start,
@@ -1464,7 +1468,7 @@ html.world-compact .hero-facts dd {
 }
 
 html.world-compact .hero-facts dt {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     line-height: 1.3;
 }
 
@@ -1599,29 +1603,139 @@ html.world-compact .contact-email {
     font-size: 1.125rem;
 }
 
-/* The "More" chip: a small white pill with a down chevron, a CSS3D object over the panel. */
-html.world-compact .board-more {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 32px;
-    padding: 0 14px;
-    background: var(--white);
-    color: var(--ink);
-    border: 2px solid var(--btn-line);
-    border-radius: 999px;
-    font: 700 0.8125rem/1 var(--font);
-    cursor: pointer;
+/* ==========================================================================
+   Settled board overlay (all sizes): the board you are standing at is a plain 2D layer exactly
+   over its panel, with native scrolling and crisp text. It goes back into the 3D scene while
+   the world moves. Boards that are not near (phones) are plain frames with a title.
+   ========================================================================== */
+picture {
+    display: contents;
+}
+
+.board-host {
     backface-visibility: hidden;
 }
 
-html.world-compact .board-more[hidden] {
+.board-host .board {
+    overflow: hidden;
+}
+
+/* No scroll container behind the 3D panels: a clipped box, so no tall scrolling layer. */
+html.world-compact .board-host .board {
+    overflow: hidden;
+}
+
+@supports (overflow: clip) {
+    html.world-compact .board-host .board,
+    .board-host .board {
+        overflow: clip;
+    }
+}
+
+.board-overlay {
+    position: absolute;
+    z-index: 6;
+    pointer-events: none;
+    box-sizing: border-box;
+    /* The white card, border and radius live here, not on the scroller: a composited
+       scroller that paints its own background can bleed past its clip. */
+    background: var(--white);
+    border: 2px solid var(--line);
+    border-radius: 6px;
+}
+
+.board-overlay[hidden] {
     display: none;
 }
 
-html.world-compact .board-more svg {
-    width: 12px;
-    height: 12px;
+.board-overlay > .board {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0;
+    pointer-events: auto;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    scrollbar-width: thin;
+    scrollbar-color: var(--btn-line) transparent;
+}
+
+.board-overlay > .board:focus,
+.board-overlay > .board:focus-visible {
+    outline: none;
+}
+
+/* A short white fade at the bottom while there is more to read, under the "More" chip. */
+.board-overlay::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 44px;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(rgba(255, 255, 255, 0), #ffffff 80%);
+    pointer-events: none;
+    opacity: 0;
+}
+
+.board-overlay.has-more::after {
+    opacity: 1;
+}
+
+.board-overlay .board-more,
+.board-overlay .board-end {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    z-index: 2;
+    transform: translateX(-50%);
+    align-items: center;
+    gap: 4px;
+    min-height: 28px;
+    padding: 0 12px;
+    background: var(--white);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(47, 52, 56, 0.18);
+    font: 600 0.875rem/1 var(--font);
+    white-space: nowrap;
+}
+
+.board-overlay .board-more {
+    left: auto;
+    right: 8px;
+    transform: none;
+    display: inline-flex;
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: none;
+}
+
+.board-overlay .board-more[hidden],
+.board-overlay .board-end[hidden] {
+    display: none;
+}
+
+.board-overlay .board-end {
+    display: flex;
+    pointer-events: none;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.board-overlay .board-more svg {
+    width: 10px;
+    height: 10px;
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
@@ -1629,58 +1743,322 @@ html.world-compact .board-more svg {
     stroke-linejoin: round;
 }
 
-html.world-compact .hud {
-    left: var(--s-3);
+/* Previous / next buttons: always visible, one board per press. */
+.arrow-wrap {
+    position: absolute;
+    z-index: 22;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    pointer-events: none;
+}
+
+.arrow-wrap--prev {
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.arrow-wrap--next {
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.arrow {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    background: var(--white);
+    color: var(--ink);
+    border: 1px solid var(--btn-line);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(47, 52, 56, 0.12);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.arrow svg {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.arrow:hover,
+.arrow.is-hot {
+    border-color: var(--sky);
+    box-shadow: 0 0 0 4px var(--glow);
+}
+
+.arrow__label {
+    display: none;
+    max-width: 120px;
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25;
+    text-align: center;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 6px;
+}
+
+@media (min-width: 1380px) {
+    .arrow__label {
+        display: block;
+    }
+}
+
+html.world-compact .arrow-wrap {
+    top: auto;
     bottom: 10px;
+    transform: none;
+}
+
+html.world-compact .arrow-wrap--prev {
+    left: 12px;
+}
+
+html.world-compact .arrow-wrap--next {
+    right: 12px;
+}
+
+html.world-compact .arrow {
+    width: 48px;
+    height: 48px;
+}
+
+html.world-compact .arrow__label {
+    display: none;
+}
+
+/* Clicking the empty world walks to that side. */
+html.world-mode main.is-hover-prev {
+    cursor: url("../assets/cursors/prev.svg") 18 18, w-resize;
+}
+
+html.world-mode main.is-hover-next {
+    cursor: url("../assets/cursors/next.svg") 18 18, e-resize;
+}
+
+/* Key facts. */
+strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.link-btn {
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--blue);
+    font: inherit;
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: var(--sky);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.start-simple {
+    margin-top: var(--s-4);
+    color: var(--muted);
+    font-size: 0.9375rem;
+}
+
+html:not(.world-mode) .start-simple {
+    display: none;
+}
+
+/* Simple version (in the sky nav row) and Try the 3D world (plain page nav): text buttons. */
+.mode-switch,
+.try-3d {
+    min-height: 40px;
+    padding: 0 8px;
+    background: none;
+    border: 0;
+    color: var(--ink);
+    font: 500 0.9375rem/1 var(--font);
+    text-decoration: underline;
+    text-decoration-color: var(--sky);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.mode-switch:hover,
+.try-3d:hover {
+    color: var(--blue);
+}
+
+/* Image buttons (lightbox triggers). */
+.zoom {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: var(--radius-img);
+    cursor: zoom-in;
+}
+
+.frame .zoom {
+    height: 100%;
+}
+
+.shots .zoom {
+    min-width: 0;
+}
+
+.dialog__single .zoom {
+    max-width: 360px;
+}
+
+.zoom:hover img {
+    filter: brightness(1.05);
+}
+
+/* Lightbox. */
+.lightbox {
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #0e1215;
+    color: #ffffff;
+}
+
+.lightbox[open] {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.lightbox__stage {
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    padding: 64px 80px 8px;
+    touch-action: none;
+}
+
+.lightbox__img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    background: #1b2127;
+}
+
+.lightbox__img.pixel {
+    width: min(100%, 920px);
+    image-rendering: pixelated;
+}
+
+.lightbox__caption {
+    padding: 8px 16px 20px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.lightbox__btn {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.lightbox__btn:hover {
+    background: rgba(255, 255, 255, 0.24);
+}
+
+.lightbox__btn[hidden] {
+    display: none;
+}
+
+.lightbox__btn svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.lightbox__close {
+    top: 12px;
+    right: 12px;
+}
+
+.lightbox__prev {
+    left: 14px;
+    top: 50%;
+    margin-top: -24px;
+}
+
+.lightbox__next {
+    right: 14px;
+    top: 50%;
+    margin-top: -24px;
+}
+
+@media (max-width: 640px) {
+    .lightbox__stage {
+        padding: 64px 10px 8px;
+    }
+
+    .lightbox__prev,
+    .lightbox__next {
+        top: auto;
+        bottom: 56px;
+        margin-top: 0;
+    }
+}
+
+
+html.world-compact .hud {
+    left: 12px;
+    bottom: 68px;
+}
+
+html.world-compact .hud__hint {
+    display: none;
 }
 
 html.world-compact .hud__count,
 html.world-compact .hud__hint {
     padding: 3px 10px;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
 }
 
 html.world-compact .minimap {
-    right: var(--s-3);
-    bottom: 8px;
+    right: 12px;
+    bottom: 68px;
     width: 56px;
     height: 56px;
-}
-
-html.world-compact .project-dialog {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    max-height: none;
-    margin: 0;
-    padding: 64px var(--board-pad) var(--s-6);
-    background: var(--white);
-    border: 0;
-    border-radius: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    align-content: start;
-}
-
-html.world-compact .dialog__x {
-    position: fixed;
-    top: 8px;
-    right: 8px;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    background: var(--white);
-    color: var(--ink);
-    border: 2px solid var(--btn-line);
-    border-radius: 50%;
-    font: 400 1.75rem/1 var(--font);
-    cursor: pointer;
 }
 
 html.world-compact .dialog__single img {
@@ -1791,15 +2169,6 @@ html.world-compact .dialog__single img {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .cookie-banner {
-        flex-direction: column;
-        align-items: stretch;
-        gap: var(--s-3);
-    }
-
-    .cookie-banner__actions .btn {
-        flex: 1;
-    }
 }
 
 @media (max-width: 560px) {
@@ -1868,4 +2237,379 @@ html.world-compact .dialog__single img {
     to {
         visibility: visible;
     }
+}
+
+
+/* ==========================================================================
+   Dropdown menus (Work, About): a white panel, 1px border, 6px radius, 44px items
+   ========================================================================== */
+.nav-links > li {
+    position: relative;
+}
+
+.menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--s-2) 0;
+    background: none;
+    border: 0;
+    color: var(--muted);
+    font: 700 0.9375rem/1.2 var(--font);
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.menu-btn:hover,
+.menu-btn[aria-expanded="true"] {
+    color: var(--ink);
+}
+
+.menu-btn__chev {
+    width: 11px;
+    height: 11px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.15s;
+}
+
+.menu-btn[aria-expanded="true"] .menu-btn__chev {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 130;
+    min-width: 240px;
+    margin-top: 6px;
+    padding: 4px;
+    background: var(--white);
+    border: 1px solid var(--btn-line);
+    border-radius: 6px;
+    box-shadow: 0 6px 20px rgba(47, 52, 56, 0.16);
+}
+
+.submenu[hidden] {
+    display: none;
+}
+
+.submenu a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 4px;
+    color: var(--ink);
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.submenu a:hover,
+.submenu a:focus-visible {
+    background: var(--bg);
+}
+
+html.world-mode .nav-links > li {
+    border: 0;
+}
+
+html.world-mode .menu-btn.is-sky {
+    padding: 0 16px;
+}
+
+html.world-mode .menu-btn.is-sky .menu-btn__chev {
+    width: 10px;
+    height: 10px;
+}
+
+html.world-compact .menu-btn.is-sky .menu-btn__chev {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    html:not(.world-mode) .nav-links > li.has-menu {
+        border-top: 2px solid var(--line);
+    }
+
+    html:not(.world-mode) .menu-btn {
+        width: 100%;
+        height: 48px;
+        padding: 0;
+        justify-content: space-between;
+    }
+
+    html:not(.world-mode) .submenu {
+        position: static;
+        min-width: 0;
+        margin: 0 0 var(--s-2);
+        padding: 0 0 0 var(--s-3);
+        border: 0;
+        box-shadow: none;
+    }
+}
+
+/* Sky nav pills for the dropdown buttons. */
+html.world-mode .menu-btn.btn {
+    min-height: 40px;
+    padding: 0 16px;
+    background: var(--white);
+    border: 2px solid var(--btn-line);
+    color: var(--ink);
+    font: 700 0.875rem/1 var(--font);
+}
+
+html.world-mode .menu-btn.btn:hover,
+html.world-mode .menu-btn.btn[aria-expanded="true"] {
+    border-color: var(--sky);
+    box-shadow: 0 0 0 4px var(--glow);
+}
+
+
+/* ==========================================================================
+   Signs: in the 3D world a dialog is a white sign on two short posts that rises from
+   below the screen. On the plain page the dialogs keep their normal look.
+   ========================================================================== */
+.sign__panel {
+    display: contents;
+}
+
+html.world-mode dialog.sign {
+    position: fixed;
+    inset: auto 0 0 0;
+    width: min(820px, calc(100vw - 32px));
+    height: auto;
+    max-width: none;
+    max-height: none;
+    margin: 0 auto;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    color: var(--ink);
+}
+
+html.world-mode dialog.sign[open] {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    animation: sign-rise 380ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+html.world-mode dialog.sign.is-closing {
+    animation: sign-sink 280ms cubic-bezier(0.5, 0, 0.9, 0.5) both;
+}
+
+html.world-mode dialog.sign::backdrop {
+    background: rgba(20, 30, 40, 0.3);
+    animation: sign-scrim 260ms ease-out both;
+}
+
+html.world-mode dialog.sign.is-closing::backdrop {
+    animation: sign-scrim-out 280ms ease-in both;
+}
+
+html.world-mode dialog.sign .sign__panel {
+    position: relative;
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+    max-height: calc(100vh - 64px - 24px);
+    max-height: calc(100dvh - 64px - 24px);
+    padding: var(--s-5);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-bottom-width: 4px;
+    border-radius: 6px;
+}
+
+html.world-mode dialog.sign .dialog__title {
+    padding-right: 52px;
+}
+
+/* The two posts under the board. */
+html.world-mode dialog.sign[open]::after {
+    content: "";
+    display: block;
+    height: 64px;
+    flex: none;
+    background:
+        linear-gradient(90deg, var(--line) 0 1px, #fdfdfd 1px 20px, #e3e8ec 20px 100%) 14% 0 / 30px 100% no-repeat,
+        linear-gradient(90deg, var(--line) 0 1px, #fdfdfd 1px 20px, #e3e8ec 20px 100%) 86% 0 / 30px 100% no-repeat;
+}
+
+html.world-mode dialog.sign > .dialog__x {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: var(--white);
+    color: var(--ink);
+    border: 2px solid var(--btn-line);
+    border-radius: 6px;
+    font: 400 1.75rem/1 var(--font);
+    cursor: pointer;
+}
+
+html.world-compact dialog.sign {
+    width: calc(100vw - 16px);
+}
+
+html.world-compact dialog.sign .sign__panel {
+    max-height: calc(100vh - 48px - 16px);
+    max-height: calc(100dvh - 48px - 16px);
+    padding: var(--board-pad);
+    padding-top: 20px;
+}
+
+html.world-compact dialog.sign[open]::after {
+    height: 48px;
+}
+
+/* Image viewer as a sign. */
+html.world-mode dialog.lightbox.sign {
+    width: min(980px, calc(100vw - 24px));
+    height: auto;
+    background: none;
+    color: var(--ink);
+}
+
+html.world-mode dialog.lightbox.sign[open] {
+    display: flex;
+}
+
+html.world-mode dialog.lightbox.sign .sign__panel {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0;
+    padding: 12px;
+}
+
+html.world-mode .lightbox.sign .lightbox__stage {
+    padding: 0;
+    max-height: calc(100vh - 64px - 24px - 100px);
+    max-height: calc(100dvh - 64px - 24px - 100px);
+}
+
+html.world-mode .lightbox.sign .lightbox__img {
+    max-height: calc(100vh - 64px - 24px - 100px);
+    max-height: calc(100dvh - 64px - 24px - 100px);
+    background: var(--bg);
+}
+
+html.world-mode .lightbox.sign .lightbox__caption {
+    padding: 10px 56px 6px;
+    color: var(--ink);
+    font-size: 1rem;
+}
+
+html.world-mode .lightbox.sign .lightbox__btn {
+    background: var(--white);
+    color: var(--ink);
+    border: 2px solid var(--btn-line);
+    z-index: 2;
+}
+
+html.world-mode .lightbox.sign .lightbox__btn:hover {
+    background: var(--bg);
+}
+
+html.world-mode .lightbox.sign .lightbox__close {
+    top: 10px;
+    right: 10px;
+}
+
+html.world-mode .lightbox.sign .lightbox__prev,
+html.world-mode .lightbox.sign .lightbox__next {
+    top: calc(50% - 32px - 24px);
+    margin-top: 0;
+    bottom: auto;
+}
+
+html.world-mode .lightbox.sign .lightbox__prev {
+    left: 22px;
+}
+
+html.world-mode .lightbox.sign .lightbox__next {
+    right: 22px;
+}
+
+@keyframes sign-rise {
+    0% {
+        transform: translateY(105%);
+    }
+
+    72% {
+        transform: translateY(-1.4%);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes sign-sink {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(108%);
+    }
+}
+
+@keyframes sign-scrim {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes sign-scrim-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.world-mode dialog.sign[open],
+    html.world-mode dialog.sign.is-closing,
+    html.world-mode dialog.sign::backdrop,
+    html.world-mode dialog.sign.is-closing::backdrop {
+        animation: none;
+    }
+}
+
+.terms-dialog .legal {
+    max-width: none;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+}
+
+.terms-dialog .legal .dialog__title {
+    margin-top: 0;
 }

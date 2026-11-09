@@ -245,15 +245,55 @@ export const HATS = [
         id: 'cap',
         name: 'Cap',
         build() {
+            // A dome that hugs the head: a sphere segment a hair larger than the head, tipped back so
+            // the front edge rides just above the eyes and the back hangs lower. The brim is a thin
+            // curved shape that starts exactly on the front edge of the crown and angles down.
+            const R = 1.045;
+            const EDGE = Math.PI * 0.42;                 // polar angle where the crown ends
             const g = new THREE.Group();
-            g.add(mesh(new THREE.SphereGeometry(1.07, 28, 16, 0, Math.PI * 2, 0, Math.PI * 0.47), 0xe5484d));
-            const visor = mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.1, 24, 1, false, -Math.PI / 2, Math.PI), 0xcf3a42);
-            visor.position.set(0, 0.1, 0.42);
-            visor.rotation.x = 0.16;
-            g.add(visor);
-            const button = mesh(new THREE.SphereGeometry(0.11, 12, 8), 0xffffff);
-            button.position.set(0, 1.06, 0);
-            g.add(button);
+            const tilt = new THREE.Group();
+            tilt.rotation.x = -0.2;
+            g.add(tilt);
+            tilt.add(mesh(new THREE.SphereGeometry(R, 40, 22, 0, Math.PI * 2, 0, EDGE), 0xe5484d));
+            // The rim is a thin darker band so the cut edge reads as a hem.
+            const rimR = R * Math.sin(EDGE);
+            const rim = mesh(new THREE.TorusGeometry(rimR, 0.022, 6, 48), 0xcf3a42);
+            rim.rotation.x = Math.PI / 2;
+            rim.position.y = R * Math.cos(EDGE);
+            tilt.add(rim);
+            // Button on the apex.
+            const button = mesh(new THREE.SphereGeometry(0.085, 14, 10), 0xcf3a42);
+            button.scale.y = 0.8;
+            button.position.y = R - 0.01;
+            tilt.add(button);
+            // Brim: a strip leaving the front half of the rim, longest at the middle, sloping down.
+            const steps = 24;
+            const half = 1.2;                             // radians either side of straight ahead
+            const pos = [];
+            const idx = [];
+            const y0 = R * Math.cos(EDGE);
+            for (let i = 0; i <= steps; i++) {
+                const a = -half + (2 * half * i) / steps;
+                const len = 0.56 * Math.pow(Math.cos((a / half) * Math.PI * 0.5), 0.6);
+                const sx = Math.sin(a);
+                const cz = Math.cos(a);
+                const ix = rimR * sx;
+                const iz = rimR * cz;
+                // Outward and down: 22 degrees below the rim plane.
+                const ox = ix + sx * len * 0.93;
+                const oz = iz + cz * len * 0.93;
+                const oy = y0 - len * 0.37;
+                pos.push(ix, y0 + 0.004, iz, ox, oy, oz);
+                if (i > 0) {
+                    const k = (i - 1) * 2;
+                    idx.push(k, k + 1, k + 2, k + 1, k + 3, k + 2);
+                }
+            }
+            const brimGeo = new THREE.BufferGeometry();
+            brimGeo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+            brimGeo.setIndex(idx);
+            brimGeo.computeVertexNormals();
+            tilt.add(mesh(brimGeo, 0xcf3a42));
             return { group: g };
         }
     },
@@ -268,10 +308,6 @@ export const HATS = [
             const crown = mesh(new THREE.CylinderGeometry(0.68, 0.7, 0.95, 28), 0x3a3f44);
             crown.position.y = 1.17;
             g.add(crown);
-            const top = mesh(new THREE.SphereGeometry(0.68, 20, 6, 0, Math.PI * 2, 0, Math.PI * 0.12), 0x3a3f44);
-            top.scale.y = 0.4;
-            top.position.y = 1.64;
-            g.add(top);
             const band = mesh(new THREE.CylinderGeometry(0.715, 0.725, 0.2, 28), 0xe5484d);
             band.position.y = 0.88;
             g.add(band);
@@ -284,8 +320,8 @@ export const HATS = [
         build() {
             const g = new THREE.Group();
             const tilt = new THREE.Group();
-            tilt.position.y = 0.58;
-            tilt.rotation.x = -0.16;
+            tilt.position.y = 0.55;
+            tilt.rotation.x = -0.1;
             g.add(tilt);
             const cone = mesh(new THREE.ConeGeometry(0.86, 1.45, 28), 0x7e5bd6);
             cone.position.y = 0.72;
@@ -308,20 +344,21 @@ export const HATS = [
         name: 'Crown',
         build() {
             const g = new THREE.Group();
-            const band = mesh(new THREE.CylinderGeometry(0.92, 0.88, 0.36, 24, 1, true), 0xffc93c);
+            // A slightly conical band that follows the curve of the head.
+            const band = mesh(new THREE.CylinderGeometry(0.8, 0.89, 0.42, 28, 1, true), 0xffc93c);
             band.position.y = 0.7;
             g.add(band);
             for (let i = 0; i < 5; i++) {
                 const a = (i / 5) * Math.PI * 2;
                 const spike = mesh(new THREE.ConeGeometry(0.17, 0.4, 10), 0xffc93c);
-                spike.position.set(Math.sin(a) * 0.86, 1.06, Math.cos(a) * 0.86);
+                spike.position.set(Math.sin(a) * 0.79, 1.12, Math.cos(a) * 0.79);
                 g.add(spike);
                 const ball = mesh(new THREE.SphereGeometry(0.08, 8, 6), 0xffe08a);
-                ball.position.set(Math.sin(a) * 0.86, 1.28, Math.cos(a) * 0.86);
+                ball.position.set(Math.sin(a) * 0.79, 1.34, Math.cos(a) * 0.79);
                 g.add(ball);
             }
             const gem = mesh(new THREE.SphereGeometry(0.11, 10, 8), 0xe5484d);
-            gem.position.set(0, 0.7, 0.93);
+            gem.position.set(0, 0.7, 0.86);
             g.add(gem);
             return { group: g };
         }
@@ -332,7 +369,7 @@ export const HATS = [
         build() {
             const g = new THREE.Group();
             const tilt = new THREE.Group();
-            tilt.position.y = 0.76;
+            tilt.position.y = 0.7;
             tilt.rotation.z = -0.2;
             g.add(tilt);
             const cone = mesh(new THREE.ConeGeometry(0.58, 1.25, 26), 0x34bfef);

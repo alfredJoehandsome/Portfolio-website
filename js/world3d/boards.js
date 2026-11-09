@@ -5,8 +5,8 @@ import { RoundedBoxGeometry } from '../vendor/three/addons/geometries/RoundedBox
 import { CSS3DObject } from '../vendor/three/addons/renderers/CSS3DRenderer.js';
 import { RIM, FRAME_DEPTH } from './camera.js';
 
-const PANEL_RADIUS = 24;
-const FONT = '"M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Arial Rounded MT Bold", system-ui, sans-serif';
+const PANEL_RADIUS = 6;
+const FONT = '"Lexend", system-ui, sans-serif';
 
 function roundedShape(w, h, r) {
     const x = -w / 2;
@@ -25,7 +25,7 @@ function roundedShape(w, h, r) {
 }
 
 function frameGeometry(w, h) {
-    const geo = new RoundedBoxGeometry(w, h, FRAME_DEPTH, 2, 12);
+    const geo = new RoundedBoxGeometry(w, h, FRAME_DEPTH, 2, 2);
     const n = geo.attributes.normal;
     const count = geo.attributes.position.count;
     const colors = new Float32Array(count * 3);
@@ -56,7 +56,7 @@ export function drawBack(canvas, title) {
     let size = Math.min(h * 0.42, w * 0.2);
     let lines = [String(title)];
     const fits = (text, px) => {
-        ctx.font = '800 ' + px + 'px ' + FONT;
+        ctx.font = '600 ' + px + 'px ' + FONT;
         return ctx.measureText(text).width <= w * 0.86;
     };
     while (size > 24 && !fits(lines[0], size)) {
@@ -71,7 +71,7 @@ export function drawBack(canvas, title) {
             size -= 4;
         }
     }
-    ctx.font = '800 ' + size + 'px ' + FONT;
+    ctx.font = '600 ' + size + 'px ' + FONT;
     const lineH = size * 1.12;
     const y0 = h / 2 - ((lines.length - 1) * lineH) / 2;
     lines.forEach((line, i) => ctx.fillText(line, w / 2, y0 + i * lineH));
@@ -96,11 +96,26 @@ export function buildBoards(ctx, L, sections, heights) {
         blending: THREE.NoBlending,
         side: THREE.FrontSide
     });
-    const postGeo = new THREE.CylinderGeometry(13, 13, 1, 18);
-    const footGeo = new THREE.SphereGeometry(1, 16, 12);
+    const postGeo = new THREE.CylinderGeometry(13, 13, 1, 14);
+    const footGeo = new THREE.SphereGeometry(1, 12, 8);
     const shadowGeo = new THREE.PlaneGeometry(1, 1);
     shadowGeo.rotateX(-Math.PI / 2);
     const disposables = [postMat, footMat, frameMat, shadowMat, holeMat, postGeo, footGeo, shadowGeo];
+    // Posts, feet and shadows of every board are three instanced meshes (static).
+    const nPosts = sections.length * 2;
+    const posts = new THREE.InstancedMesh(postGeo, postMat, nPosts);
+    const feet = new THREE.InstancedMesh(footGeo, footMat, nPosts);
+    const shadows = new THREE.InstancedMesh(shadowGeo, shadowMat, nPosts);
+    shadows.renderOrder = 2;
+    [posts, feet, shadows].forEach((m) => {
+        m.frustumCulled = false;
+        root.add(m);
+    });
+    let inst = 0;
+    const _m = new THREE.Matrix4();
+    const _p = new THREE.Vector3();
+    const _q = new THREE.Quaternion();
+    const _sc = new THREE.Vector3();
 
     sections.forEach((section, i) => {
         const fit = L.fit(heights[i]);
@@ -131,7 +146,7 @@ export function buildBoards(ctx, L, sections, heights) {
         const backW = fw - 34;
         const backH = fh - 34;
         const canvas = document.createElement('canvas');
-        const px = Math.min(1024 / Math.max(backW, backH), 1.2);
+        const px = Math.min((L.compact ? 640 : 1024) / Math.max(backW, backH), L.compact ? 1 : 1.2);
         canvas.width = Math.max(64, Math.round(backW * px));
         canvas.height = Math.max(64, Math.round(backH * px));
         const tex = new THREE.CanvasTexture(canvas);
@@ -145,30 +160,40 @@ export function buildBoards(ctx, L, sections, heights) {
         back.rotation.y = Math.PI;
         back.position.set(0, cy, -FRAME_DEPTH - 0.9);
         group.add(back);
+        // Same title on the front: shown instead of the hole while the DOM is not mounted.
+        const front = new THREE.Mesh(backGeo, back.material);
+        front.position.set(0, cy, 0.4);
+        front.visible = false;
+        group.add(front);
         disposables.push(frameGeo, holeGeo, backGeo, back.material, tex);
 
-        // Posts and feet.
+        // Posts and feet (instanced, placed in world space).
+        group.updateMatrixWorld(true);
         const frameBottom = cy - fh / 2;
         const postTop = frameBottom + 6;
         [-1, 1].forEach((side) => {
             const x = side * fw * 0.32;
-            const post = new THREE.Mesh(postGeo, postMat);
-            post.scale.set(1, postTop, 1);
-            post.position.set(x, postTop / 2, -FRAME_DEPTH / 2 - 0.5);
-            group.add(post);
-            const foot = new THREE.Mesh(footGeo, footMat);
-            foot.scale.set(26, 15, 26);
-            foot.position.set(x, 2, -FRAME_DEPTH / 2 - 0.5);
-            group.add(foot);
-            const shadow = new THREE.Mesh(shadowGeo, shadowMat);
-            shadow.scale.set(150, 1, 150);
-            shadow.position.set(x, 0.9, -FRAME_DEPTH / 2 - 0.5);
-            shadow.renderOrder = 2;
-            group.add(shadow);
+            const place = (mesh, local, scale) => {
+                _p.copy(local).applyMatrix4(group.matrixWorld);
+                _q.setFromRotationMatrix(_m.extractRotation(group.matrixWorld));
+                _sc.copy(scale);
+                _m.compose(_p, _q, _sc);
+                mesh.setMatrixAt(inst, _m);
+            };
+            const zl = -FRAME_DEPTH / 2 - 0.5;
+            place(posts, new THREE.Vector3(x, postTop / 2, zl), new THREE.Vector3(1, postTop, 1));
+            place(feet, new THREE.Vector3(x, 2, zl), new THREE.Vector3(26, 15, 26));
+            place(shadows, new THREE.Vector3(x, 0.9, zl), new THREE.Vector3(150, 1, 150));
+            inst++;
         });
 
         // The real DOM, 1:1 on the plane (scaled only when the panel had to be fitted).
-        const css = new CSS3DObject(section);
+        const host = document.createElement('div');
+        host.className = 'board-host';
+        host.style.width = L.boardW + 'px';
+        host.style.height = heights[i] + 'px';
+        host.appendChild(section);
+        const css = new CSS3DObject(host);
         section.style.userSelect = '';
         section.style.width = L.boardW + 'px';
         section.style.height = heights[i] + 'px';
@@ -176,12 +201,23 @@ export function buildBoards(ctx, L, sections, heights) {
         css.scale.setScalar(fit.scale);
         group.add(css);
 
-        boards.push({ index: i, section, group, css, hole, frame, fit, angle });
+        boards.push({ index: i, section, host, group, css, hole, front, frame, fit, angle, mounted: true });
     });
 
     function dispose() {
         disposables.forEach((d) => d.dispose && d.dispose());
         ctx.scene.remove(root);
+    }
+
+    // Mount (full DOM in the 3D scene) or unmount (white frame with its title) one board.
+    function setMounted(board, on) {
+        if (board.mounted === on) {
+            return;
+        }
+        board.mounted = on;
+        board.css.visible = on;
+        board.hole.visible = on;
+        board.front.visible = !on;
     }
 
     function redrawBacks() {
@@ -196,5 +232,9 @@ export function buildBoards(ctx, L, sections, heights) {
         });
     }
 
-    return { boards, root, dispose, redrawBacks };
+    posts.instanceMatrix.needsUpdate = true;
+    feet.instanceMatrix.needsUpdate = true;
+    shadows.instanceMatrix.needsUpdate = true;
+    disposables.push(posts, feet, shadows);
+    return { boards, root, dispose, redrawBacks, setMounted };
 }

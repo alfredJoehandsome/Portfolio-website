@@ -8,7 +8,6 @@ export const FRAME_DEPTH = 26;
 const NAV_GAP = 14;
 const COMPACT_NAV_GAP = 12;
 const HAT_MAX = 1.22;                   // tallest hat adds this much to the figure height
-const MIN_FIT = 0.62;                   // a tall board is never scaled below this
 
 const rad = (deg) => (deg * Math.PI) / 180;
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
@@ -38,7 +37,7 @@ export function makeLayout(o) {
     // Panel width: parity follows the viewport so panel edges land on whole pixels.
     let boardW = compact
         ? Math.min(vw - 2 * 24, 460)
-        : Math.min(1120, Math.round(vw * 0.86));
+        : Math.min(1120, vw - 2 * 96);
     boardW = Math.floor(boardW / 2) * 2 + (vw % 2);
     const region = Math.floor(bottom - top);
 
@@ -70,16 +69,13 @@ export function makeLayout(o) {
     // Fit one panel of natural height h (px): scale k so it sits in the free region,
     // and the screen y of its top edge so it is centred there (whole pixels at k = 1).
     L.fit = function (h) {
-        let scale = 1;
-        if (h > region) {
-            scale = Math.max(MIN_FIT, region / h);
-        }
-        const shown = h * scale;
+        // Panels are never scaled down: a tall one is cut to the free region and scrolls.
+        const shown = Math.min(h, region);
         const topPx = Math.round(top + (region - shown) / 2);
         const centerScreen = topPx + shown / 2;
         // World height of the panel centre: it is at distance D, so screen offsets are 1:1.
         const centerY = yc + (vh / 2 - centerScreen);
-        return { scale, w: boardW * scale, h: shown, topPx, centerScreen, centerY };
+        return { scale: 1, w: boardW, h: shown, topPx, centerScreen, centerY, natural: h, overflow: h > region };
     };
 
     L.read = { rho: Rb + D, h: yc, pitch: 0, fov: fovRead };

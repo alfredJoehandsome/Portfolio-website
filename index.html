@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content="#ffffff" />
     <title>Alfred Johansson | Designer &amp; Developer</title>
     <meta name="description" content="Alfred Johansson, designer and developer. C# and object-oriented development, shipped a game on Steam with 25,000+ copies, currently technical lead of a 12 person team." />
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap"
-          rel="stylesheet" />
 
     <link rel="stylesheet" href="css/style.css" />
     <noscript><style>html:not(.js) body { visibility: visible; }</style></noscript>
@@ -80,10 +76,28 @@
 
             <nav class="nav" id="nav-links" aria-label="Primary navigation">
                 <ul class="nav-links">
-                    <li><a href="#murmurs">Work</a></li>
-                    <li><a href="#experience">Experience</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li class="has-menu">
+                        <button type="button" class="menu-btn" data-nav="murmurs" aria-expanded="false" aria-controls="menu-work" aria-haspopup="true">Work <svg class="menu-btn__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" /></svg></button>
+                        <ul class="submenu" id="menu-work" hidden>
+                            <li><a href="#murmurs">Murmurs of the Mist</a></li>
+                            <li><a href="#pizza-to-hell">Pizza to Hell</a></li>
+                            <li><a href="#projects" data-open-dialog="dialog-harpoon">Harpoon</a></li>
+                            <li><a href="#projects" data-open-dialog="dialog-freakthrow">FreakThrow</a></li>
+                            <li><a href="#projects" data-open-dialog="dialog-mr-sardin">Mr.Sardin</a></li>
+                            <li><a href="#projects" data-open-dialog="dialog-klara">Klara</a></li>
+                            <li><a href="#projects" data-open-dialog="dialog-astronova">Astronova</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#experience" data-nav="experience">Experience</a></li>
+                    <li class="has-menu">
+                        <button type="button" class="menu-btn" data-nav="about" aria-expanded="false" aria-controls="menu-about" aria-haspopup="true">About <svg class="menu-btn__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" /></svg></button>
+                        <ul class="submenu" id="menu-about" hidden>
+                            <li><a href="#about">About me</a></li>
+                            <li><a href="#strengths">What I bring</a></li>
+                            <li><a href="#testimonials">Testimonials</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#contact" data-nav="contact">Contact</a></li>
                     <li><a class="btn btn--secondary btn--sm" href="assets/Resume.pdf" target="_blank" rel="noopener noreferrer">Resume</a></li>
                 </ul>
             </nav>
@@ -94,7 +108,7 @@
         <section id="start" class="board board--start" data-stop data-title="Start">
             <div class="start__intro">
                 <h1>Alfred Johansson</h1>
-                <p class="lead">Designer and C# developer with a strong foundation in object-oriented development. I shipped a game on Steam with 25,000+ copies and now lead a 12 person team as technical lead, with AI tools as a natural part of my flow.</p>
+                <p class="lead">Designer and C# developer with a strong foundation in object-oriented development. I shipped a game on Steam with <strong>25,000+ copies</strong> and now lead a <strong>12 person team</strong> as technical lead, with AI tools as a natural part of my flow.</p>
 
                 <dl class="hero-facts">
                     <div class="hero-facts__item">
@@ -110,6 +124,7 @@
                         <dd>7</dd>
                     </div>
                 </dl>
+                <p class="start-simple">Prefer a normal page? <button type="button" class="link-btn" data-simple-version>Simple version</button></p>
             </div>
 
             <div class="creator" aria-labelledby="creator-title">
@@ -150,19 +165,19 @@
         <section id="murmurs" class="board board--feature" data-stop data-title="Murmurs of the Mist">
             <div class="feature__media">
                 <div class="frame">
-                    <img src="assets/images/web/murmurs-main.jpg" alt="Murmurs of the Mist, key art" width="1232" height="706" decoding="async" />
+                    <picture><source type="image/webp" srcset="assets/images/web/murmurs-main.webp" /><img src="assets/images/web/murmurs-main.jpg" alt="Murmurs of the Mist, key art" width="1232" height="706" decoding="async" /></picture>
                 </div>
                 <div class="shots">
-                    <img src="assets/images/web/murmurs-pushbox.jpg" alt="Murmurs of the Mist, pushing a box in a close-up room" width="960" height="540" decoding="async" />
-                    <img src="assets/images/web/murmurs-chase.jpg" alt="Murmurs of the Mist, a chase through the corridors" width="960" height="540" decoding="async" />
-                    <img src="assets/images/web/murmurs-classroom.jpg" alt="Murmurs of the Mist, the classroom" width="960" height="540" decoding="async" />
+                    <picture><source type="image/webp" srcset="assets/images/web/murmurs-pushbox.webp" /><img src="assets/images/web/murmurs-pushbox.jpg" alt="Murmurs of the Mist, pushing a box in a close-up room" width="960" height="540" decoding="async" /></picture>
+                    <picture><source type="image/webp" srcset="assets/images/web/murmurs-chase.webp" /><img src="assets/images/web/murmurs-chase.jpg" alt="Murmurs of the Mist, a chase through the corridors" width="960" height="540" decoding="async" /></picture>
+                    <picture><source type="image/webp" srcset="assets/images/web/murmurs-classroom.webp" /><img src="assets/images/web/murmurs-classroom.jpg" alt="Murmurs of the Mist, the classroom" width="960" height="540" decoding="async" /></picture>
                 </div>
             </div>
             <div class="feature__body">
                 <h2 class="board__title">Murmurs of the Mist</h2>
-                <p class="meta">Steam · 25,000+ claimed copies · 11-person team</p>
+                <p class="meta">Steam · <strong>25,000+ claimed copies</strong> · <strong>11-person team</strong></p>
                 <p>A narrative-driven horror puzzle game where you use the environment to solve each room. Take note of every detail, they help you uncover Sofia's story.</p>
-                <p class="role"><strong>Role:</strong> Lead designer and programmer (CTO) on an 11 person team. I led programming and design from first prototype to release, and owned the technical foundation: architecture decisions, version control (Perforce) and build pipeline.</p>
+                <p class="role"><strong>Role:</strong> <strong>Lead designer and programmer (CTO)</strong> on an <strong>11 person team</strong>. I led programming and design from first prototype to release, and owned the technical foundation: architecture decisions, version control (Perforce) and build pipeline.</p>
                 <dl class="facts">
                     <div><dt>Focus</dt><dd>programming and design, technical architecture, version control (Perforce), build pipeline, gameplay, UX/UI and cinematic cameras.</dd></div>
                     <div><dt>Tools</dt><dd>Unity, C#, Perforce.</dd></div>
@@ -179,17 +194,17 @@
         <section id="pizza-to-hell" class="board board--feature board--mirrored" data-stop data-title="Pizza to Hell">
             <div class="feature__media feature__media--pair">
                 <div class="frame frame--title">
-                    <img src="assets/images/web/pizza-to-hell-title.jpg" alt="Pizza to Hell, title art" width="806" height="602" loading="lazy" decoding="async" />
+                    <picture><source type="image/webp" srcset="assets/images/web/pizza-to-hell-title.webp" /><img src="assets/images/web/pizza-to-hell-title.jpg" alt="Pizza to Hell, title art" width="806" height="602" loading="lazy" decoding="async" /></picture>
                 </div>
                 <div class="frame frame--gif">
-                    <img class="pixel" src="assets/images/web/pizza-to-hell-gameplay.gif" alt="Pizza to Hell, gameplay" width="230" height="115" loading="lazy" decoding="async" />
+                    <picture><source type="image/webp" srcset="assets/images/web/pizza-to-hell-gameplay.webp" /><img class="pixel" src="assets/images/web/pizza-to-hell-gameplay.gif" alt="Pizza to Hell, gameplay" width="230" height="115" loading="lazy" decoding="async" /></picture>
                 </div>
             </div>
             <div class="feature__body">
                 <h2 class="board__title">Pizza to Hell</h2>
-                <p class="meta">Pizza to Hell HB · 12-person team · Vertical slice in development</p>
+                <p class="meta">Pizza to Hell HB · <strong>12-person team</strong> · Vertical slice in development</p>
                 <p>A PSX style action roguelite. You are a pizza delivery man fighting through a sin themed underworld to deliver a pizza to the Devil. Posture based combat staggers enemies for a finisher, with pizza topping build variety, a combo streak multi hit system and room to room runs.</p>
-                <p class="role"><strong>Role:</strong> Technical lead and designer on my own company, Pizza to Hell HB. I lead a 12 person team as work lead, setting the workflow, running sync meetings and keeping systems modular and integration ready. I built the finisher system from scratch with clean integration between team owned modules, plus an event driven footstep system.</p>
+                <p class="role"><strong>Role:</strong> <strong>Technical lead and designer</strong> on my own company, Pizza to Hell HB. I lead a <strong>12 person team</strong> as work lead, setting the workflow, running sync meetings and keeping systems modular and integration ready. I built the finisher system from scratch with clean integration between team owned modules, plus an event driven footstep system.</p>
                 <dl class="facts">
                     <div><dt>Focus</dt><dd>technical lead and workflow, finisher system built from scratch, clean module integration, event driven footstep system, technical art and finisher cameras.</dd></div>
                     <div><dt>Tools</dt><dd>Unity, C#, animation events.</dd></div>
@@ -214,7 +229,7 @@
                 </article>
                 <article class="project-card">
                     <div class="frame">
-                        <img src="assets/images/web/freakthrow-title.jpg" alt="FreakThrow title card" width="960" height="558" loading="lazy" decoding="async" />
+                        <picture><source type="image/webp" srcset="assets/images/web/freakthrow-title.webp" /><img src="assets/images/web/freakthrow-title.jpg" alt="FreakThrow title card" width="960" height="558" loading="lazy" decoding="async" /></picture>
                     </div>
                     <h3>FreakThrow</h3>
                     <p>A vertical slice project. A horror carnival game with ramping intensity.</p>
@@ -222,7 +237,7 @@
                 </article>
                 <article class="project-card">
                     <div class="frame">
-                        <img src="assets/images/web/mr-sardin-title.jpg" alt="Mr.Sardin title screen" width="960" height="524" loading="lazy" decoding="async" />
+                        <picture><source type="image/webp" srcset="assets/images/web/mr-sardin-title.webp" /><img src="assets/images/web/mr-sardin-title.jpg" alt="Mr.Sardin title screen" width="960" height="524" loading="lazy" decoding="async" /></picture>
                     </div>
                     <h3>Mr.Sardin</h3>
                     <p>A fast paced parkour platformer with comedic art and narrative.</p>
@@ -230,7 +245,7 @@
                 </article>
                 <article class="project-card">
                     <div class="frame">
-                        <img src="assets/images/web/klara-title.jpg" alt="Klara title screen" width="960" height="476" loading="lazy" decoding="async" />
+                        <picture><source type="image/webp" srcset="assets/images/web/klara-title.webp" /><img src="assets/images/web/klara-title.jpg" alt="Klara title screen" width="960" height="476" loading="lazy" decoding="async" /></picture>
                     </div>
                     <h3>Klara</h3>
                     <p>A game jam project. A 2.5D DOOM inspired horror game.</p>
@@ -238,7 +253,7 @@
                 </article>
                 <article class="project-card">
                     <div class="frame">
-                        <img src="assets/images/web/astronova-title.jpg" alt="Astronova title screen" width="960" height="663" loading="lazy" decoding="async" />
+                        <picture><source type="image/webp" srcset="assets/images/web/astronova-title.webp" /><img src="assets/images/web/astronova-title.jpg" alt="Astronova title screen" width="960" height="663" loading="lazy" decoding="async" /></picture>
                     </div>
                     <h3>Astronova</h3>
                     <p>A Space Invaders inspired arcade shooter built around game feel.</p>
@@ -267,9 +282,9 @@
                     <p>A vertical slice project. A horror carnival game with ramping intensity.</p>
                     <p class="role"><strong>Role:</strong> Lead designer and programmer. Designed the aiming and throwing mechanic, plus animation implementation and Unity configuration.</p>
                     <div class="shots">
-                        <img src="assets/images/web/freakthrow-1.jpg" alt="FreakThrow, level 1 carnival booth" width="960" height="539" loading="lazy" decoding="async" />
-                        <img src="assets/images/web/freakthrow-2.jpg" alt="FreakThrow, level 2" width="960" height="541" loading="lazy" decoding="async" />
-                        <img src="assets/images/web/freakthrow-3.jpg" alt="FreakThrow, level 3" width="960" height="540" loading="lazy" decoding="async" />
+                        <picture><source type="image/webp" srcset="assets/images/web/freakthrow-1.webp" /><img src="assets/images/web/freakthrow-1.jpg" alt="FreakThrow, level 1 carnival booth" width="960" height="539" loading="lazy" decoding="async" /></picture>
+                        <picture><source type="image/webp" srcset="assets/images/web/freakthrow-2.webp" /><img src="assets/images/web/freakthrow-2.jpg" alt="FreakThrow, level 2" width="960" height="541" loading="lazy" decoding="async" /></picture>
+                        <picture><source type="image/webp" srcset="assets/images/web/freakthrow-3.webp" /><img src="assets/images/web/freakthrow-3.jpg" alt="FreakThrow, level 3" width="960" height="540" loading="lazy" decoding="async" /></picture>
                     </div>
                     <dl class="facts">
                         <div><dt>Focus</dt><dd>gameplay, visuals, Unity configuration.</dd></div>
@@ -287,9 +302,9 @@
                     <p>A fast paced parkour platformer. Get to the end before time runs out, with comedic art and narrative.</p>
                     <p class="role"><strong>Role:</strong> Lead designer and programmer. Designed player movement, several traps and animation cues.</p>
                     <div class="shots">
-                        <img src="assets/images/web/mr-sardin-1.jpg" alt="Mr.Sardin, platforming section" width="960" height="540" loading="lazy" decoding="async" />
-                        <img src="assets/images/web/mr-sardin-2.jpg" alt="Mr.Sardin, trap section" width="960" height="538" loading="lazy" decoding="async" />
-                        <img src="assets/images/web/mr-sardin-3.jpg" alt="Mr.Sardin, late level" width="960" height="538" loading="lazy" decoding="async" />
+                        <picture><source type="image/webp" srcset="assets/images/web/mr-sardin-1.webp" /><img src="assets/images/web/mr-sardin-1.jpg" alt="Mr.Sardin, platforming section" width="960" height="540" loading="lazy" decoding="async" /></picture>
+                        <picture><source type="image/webp" srcset="assets/images/web/mr-sardin-2.webp" /><img src="assets/images/web/mr-sardin-2.jpg" alt="Mr.Sardin, trap section" width="960" height="538" loading="lazy" decoding="async" /></picture>
+                        <picture><source type="image/webp" srcset="assets/images/web/mr-sardin-3.webp" /><img src="assets/images/web/mr-sardin-3.jpg" alt="Mr.Sardin, late level" width="960" height="538" loading="lazy" decoding="async" /></picture>
                     </div>
                     <dl class="facts">
                         <div><dt>Focus</dt><dd>player movement and animation, music production, Unity configuration, parallax background.</dd></div>
@@ -307,9 +322,9 @@
                     <p>A game jam project. A 2.5D DOOM inspired horror game. Find the key and escape the dungeon, but do not make too much noise.</p>
                     <p class="role"><strong>Role:</strong> UX designer and programmer. Designed enemy behaviour and the sound detection system, plus music production.</p>
                     <div class="shots">
-                        <img src="assets/images/web/klara-1.jpg" alt="Klara, dungeon corridor" width="960" height="541" loading="lazy" decoding="async" />
-                        <img src="assets/images/web/klara-2.jpg" alt="Klara, monster encounter" width="960" height="540" loading="lazy" decoding="async" />
-                        <img src="assets/images/web/klara-3.jpg" alt="Klara, key room" width="960" height="540" loading="lazy" decoding="async" />
+                        <picture><source type="image/webp" srcset="assets/images/web/klara-1.webp" /><img src="assets/images/web/klara-1.jpg" alt="Klara, dungeon corridor" width="960" height="541" loading="lazy" decoding="async" /></picture>
+                        <picture><source type="image/webp" srcset="assets/images/web/klara-2.webp" /><img src="assets/images/web/klara-2.jpg" alt="Klara, monster encounter" width="960" height="540" loading="lazy" decoding="async" /></picture>
+                        <picture><source type="image/webp" srcset="assets/images/web/klara-3.webp" /><img src="assets/images/web/klara-3.jpg" alt="Klara, key room" width="960" height="540" loading="lazy" decoding="async" /></picture>
                     </div>
                     <dl class="facts">
                         <div><dt>Focus</dt><dd>monster behaviour, noise detection system.</dd></div>
@@ -327,9 +342,9 @@
                     <p>A Space Invaders inspired arcade shooter built around game feel. Screen shake, punchy feedback and music make every hit land.</p>
                     <p class="role"><strong>Role:</strong> Designer and programmer. Handled design and post production, including screen shake, feedback and music.</p>
                     <div class="shots">
-                        <img src="assets/images/web/astronova-1.jpg" alt="Astronova, gameplay" width="960" height="540" loading="lazy" decoding="async" />
-                        <img src="assets/images/web/astronova-2.jpg" alt="Astronova, death screen" width="960" height="539" loading="lazy" decoding="async" />
-                        <img src="assets/images/web/astronova-3.jpg" alt="Astronova, boss battle" width="960" height="544" loading="lazy" decoding="async" />
+                        <picture><source type="image/webp" srcset="assets/images/web/astronova-1.webp" /><img src="assets/images/web/astronova-1.jpg" alt="Astronova, gameplay" width="960" height="540" loading="lazy" decoding="async" /></picture>
+                        <picture><source type="image/webp" srcset="assets/images/web/astronova-2.webp" /><img src="assets/images/web/astronova-2.jpg" alt="Astronova, death screen" width="960" height="539" loading="lazy" decoding="async" /></picture>
+                        <picture><source type="image/webp" srcset="assets/images/web/astronova-3.webp" /><img src="assets/images/web/astronova-3.jpg" alt="Astronova, boss battle" width="960" height="544" loading="lazy" decoding="async" /></picture>
                     </div>
                     <dl class="facts">
                         <div><dt>Focus</dt><dd>post production, screen shake, damage feedback, music production.</dd></div>
@@ -354,7 +369,7 @@
                         <p class="exp-tags">Unity · QA · Bug reproduction · Playtesting · Google Sheets · OBS · Version control</p>
                     </div>
                     <ul class="exp-points">
-                        <li>Playtested an unannounced NDA title in structured daily sessions, logging 67 bugs in the first three weeks with clear repro steps and recorded playthroughs, including a softlock in the dialogue system.</li>
+                        <li>Playtested an unannounced NDA title in structured daily sessions, logging <strong>67 bugs</strong> in the first three weeks with clear repro steps and recorded playthroughs, including a softlock in the dialogue system.</li>
                         <li>Wrote actionable bug reports and design feedback with proposed solutions, and reworked the studio's reporting flow into a tagged, filterable format that simplifies prioritization for the dev leads.</li>
                         <li>Onboarded independently from the studio's internal documentation: a new version control system, naming conventions and a professional development pipeline.</li>
                     </ul>
@@ -368,8 +383,8 @@
                         <p class="exp-meta"><span class="exp-company">LVL</span> · 2025 to 2026 · Södertörn</p>
                         <p>Led operations and external communication for LVL, Södertörn University's game development student association.</p>
                         <ul class="exp-points">
-                            <li>Coordinated 15+ events and gatherings for the association, leading the team and owning external partner communication.</li>
-                            <li>Introduced around 30 students to game development by designing and leading a hands on workshop.</li>
+                            <li>Coordinated <strong>15+ events</strong> and gatherings for the association, leading the team and owning external partner communication.</li>
+                            <li>Introduced <strong>around 30 students</strong> to game development by designing and leading a hands on workshop.</li>
                         </ul>
                         <p class="exp-tags">Leadership · Event coordination · Communication</p>
                     </article>
@@ -389,12 +404,12 @@
 
         <section id="about" class="board board--about" data-stop data-title="About">
             <div class="about-portrait">
-                <img src="assets/images/web/picture-of-me.jpg" alt="Portrait of Alfred Johansson" width="837" height="875" loading="lazy" decoding="async" />
+                <picture><source type="image/webp" srcset="assets/images/web/picture-of-me.webp" /><img src="assets/images/web/picture-of-me.jpg" alt="Portrait of Alfred Johansson" width="837" height="875" loading="lazy" decoding="async" /></picture>
             </div>
             <div class="about-content">
                 <h2 class="board__title">About me</h2>
                 <p>I am a recent graduate with a strong foundation in C# and object-oriented development. I like owning systems end to end, from architecture and gameplay code to polish and iteration, and I care about shipping finished results that hold together.</p>
-                <p>I shipped a game on Steam with 25,000+ copies and currently lead a 12 person team as technical lead. I work with AI tools as a natural part of my development flow, and a C# background makes the step to other languages short. I hold a BSc in Media Technology with a focus on game development.</p>
+                <p>I shipped a game on Steam with <strong>25,000+ copies</strong> and currently lead a <strong>12 person team</strong> as technical lead. I work with AI tools as a natural part of my development flow, and a C# background makes the step to other languages short. I hold a BSc in Media Technology with a focus on game development.</p>
             </div>
         </section>
 
@@ -412,7 +427,7 @@
                     </div>
                     <div class="strength">
                         <h3>Team leadership</h3>
-                        <p>I lead a 12 person team as technical lead and shipped a game as CTO. I set the workflow, run sync meetings and keep systems modular and integration ready.</p>
+                        <p>I lead a <strong>12 person team</strong> as technical lead and shipped a game as CTO. I set the workflow, run sync meetings and keep systems modular and integration ready.</p>
                     </div>
                     <div class="strength">
                         <h3>Testing &amp; QA</h3>
@@ -500,20 +515,57 @@
         </section>
     </main>
 
-    <!-- Cookie notice -->
-    <div id="cookie-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice" hidden>
-        <p class="cookie-banner__text">
-            This site uses only essential local storage to remember your preferences, such as your cookie choice and the character you made. It has no tracking or advertising cookies. Read the <a href="terms.html">terms and privacy</a>.
-        </p>
-        <div class="cookie-banner__actions">
-            <button type="button" class="btn btn--secondary btn--sm" id="cookie-decline">Decline</button>
-            <button type="button" class="btn btn--primary btn--sm" id="cookie-accept">Accept</button>
-        </div>
-    </div>
-
     <div class="loader" aria-hidden="true"><span class="loader__flower"></span></div>
 
     <script type="module" src="js/world3d/main.js"></script>
     <script src="js/script.js" defer></script>
+    <dialog class="project-dialog terms-dialog" id="dialog-terms" aria-labelledby="dialog-terms-title">
+        <button type="button" class="dialog__x" data-dialog-close aria-label="Close">&times;</button>
+        <div class="legal">
+                                <h2 class="dialog__title" id="dialog-terms-title">Terms &amp; Privacy</h2>
+                                <p class="legal-updated">Last updated 9 November 2026</p>
+
+                                <h2>Terms of service</h2>
+                                <p>This website, alfredjohansson.fyi, is the personal portfolio of Alfred Johansson. By visiting and using the site you agree to these terms. If you do not agree, please do not use the site.</p>
+
+                                <h3>Use of the site</h3>
+                                <p>You may view and share the site for personal, non commercial purposes. The text, design, code and images are owned by Alfred Johansson unless stated otherwise, and may not be copied or reused without permission. Game titles, screenshots and trademarks belong to their respective owners.</p>
+
+                                <h3>External links</h3>
+                                <p>The site links to other services such as Steam, GitHub and LinkedIn. Those services have their own terms and privacy policies, and I am not responsible for their content or practices.</p>
+
+                                <h3>No warranty</h3>
+                                <p>The site is provided as is, without warranty of any kind. I work to keep the information accurate and the site available, but I cannot guarantee it is free of errors or always online.</p>
+
+                                <h3>Changes</h3>
+                                <p>These terms may change over time. The most recent version will always be on this page.</p>
+
+                                <h2>Privacy notice</h2>
+                                <p>I care about your privacy and collect as little as possible.</p>
+
+                                <h3>Cookies</h3>
+                                <p>This site sets no cookies and has no cookie banner. Nothing on it tracks you, and no third party is contacted when you visit.</p>
+
+                                <h3>Local storage</h3>
+                                <p>The site keeps two things in your browser's local storage, and only because you choose them: the character you made, and your choice of the 3D world or the simple version of the site. They stay on your device, nothing is sent anywhere, and you can clear them at any time through your browser settings.</p>
+
+                                <h3>Fonts</h3>
+                                <p>The font (Lexend) is hosted on this site. Your browser does not contact Google or any other font service.</p>
+
+                                <h3>Analytics and advertising</h3>
+                                <p>There is no analytics, no tracking and no third party advertising on this site.</p>
+
+                                <h3>Contact</h3>
+                                <p>If you have any questions about these terms or your privacy, email me at <a href="mailto:alfred.karl.jo@gmail.com">alfred.karl.jo@gmail.com</a>.</p>
+        
+        </div>
+        <div class="dialog__actions">
+            <button type="button" class="btn btn--primary btn--sm" data-dialog-close>Close</button>
+        </div>
+    </dialog>
+
+    <script src="js/signs.js" defer></script>
+    <script src="js/menus.js" defer></script>
+    <script src="js/lightbox.js" defer></script>
 </body>
 </html>

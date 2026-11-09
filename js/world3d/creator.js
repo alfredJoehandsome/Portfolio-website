@@ -1,5 +1,5 @@
-// The character creator on the start board: HTML controls and a small live WebGL preview
-// (a second renderer) that shows the same character from the front, slowly turning.
+// The character creator on the start board: HTML controls and a small live preview that
+// shows the character from the front (drawn by the one shared renderer, see below).
 import { THREE, blobTexture } from './scene.js';
 import { FACES, HATS, SHIRTS, PANTS, buildCharacter, characterStore, faceById, hatById } from './character.js';
 
@@ -37,10 +37,12 @@ export function createCreator(root) {
         const i = list.findIndex((x) => x.id === state[key]);
         characterStore.set({ [key]: list[(i + delta + list.length) % list.length].id });
     }
+    const bound = [];
     const bind = (selector, fn) => {
         const el = root.querySelector(selector);
         if (el) {
             el.addEventListener('click', fn);
+            bound.push([el, fn]);
         }
     };
     bind('[data-face-prev]', () => step(FACES, 'face', -1));
@@ -73,15 +75,16 @@ export function createCreator(root) {
     }
 
     // ---- preview -------------------------------------------------------------------
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setClearColor(0x000000, 0);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    const canvas = renderer.domElement;
+    // No renderer of its own: phones allow very few WebGL contexts. The preview scene is drawn
+    // by the main renderer into a corner of its canvas (scissored, transparent), copied onto
+    // this 2D canvas, and then the main frame overwrites the corner. Nothing here spins: the
+    // character faces forward, breathes and blinks.
+    const canvas = document.createElement('canvas');
     canvas.className = 'creator__canvas';
     canvas.setAttribute('role', 'img');
-    canvas.setAttribute('aria-label', 'Preview of the character you made. Drag to turn it.');
-    canvas.setAttribute('data-no-walk', '');
+    canvas.setAttribute('aria-label', 'Preview of the character you made');
     previewHost.appendChild(canvas);
+    const ctx2d = canvas.getContext('2d');
 
     const scene = new THREE.Scene();
     scene.add(new THREE.HemisphereLight(0xf4fbff, 0xcfe9b8, Math.PI * 0.55));
@@ -100,27 +103,20 @@ export function createCreator(root) {
     shadow.position.y = 0.002;
     scene.add(shadow);
 
-    let yaw = 0;
-    let auto = true;
-    let frozen = false;
-    let resumeAt = 0;
-    let time = 0;
-    let dragging = null;
+    let dirty = true;
+    let lastDraw = 0;
     let width = 0;
     let height = 0;
+    const FRAME_MS = 100;
+    const _vp = new THREE.Vector4();
+    const _col = new THREE.Color();
+    const _size = new THREE.Vector2();
 
     function resize() {
-        const w = Math.max(1, previewHost.clientWidth);
-        const h = Math.max(1, previewHost.clientHeight);
-        if (w === width && h === height) {
-            return;
-        }
-        width = w;
-        height = h;
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-        renderer.setSize(w, h, false);
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
+        dirty = true;
+    }
+
+    function frameCamera(w, h) {
         camera.aspect = w / h;
         // Frame a 1.4 unit tall figure (room for tall hats) whatever the aspect.
         const need = 1.38;
@@ -133,76 +129,79 @@ export function createCreator(root) {
         camera.updateProjectionMatrix();
     }
 
-    canvas.addEventListener('pointerdown', (event) => {
-        dragging = { id: event.pointerId, x: event.clientX };
-        auto = false;
-        try {
-            canvas.setPointerCapture(event.pointerId);
-        } catch (e) {
-            // Optional.
-        }
-        event.stopPropagation();
-    });
-    canvas.addEventListener('pointermove', (event) => {
-        if (dragging && event.pointerId === dragging.id) {
-            yaw += (event.clientX - dragging.x) * 0.012;
-            dragging.x = event.clientX;
-            event.stopPropagation();
-        }
-    });
-    const endDrag = (event) => {
-        if (dragging && event.pointerId === dragging.id) {
-            dragging = null;
-            resumeAt = performance.now() + 2500;
-        }
-    };
-    canvas.addEventListener('pointerup', endDrag);
-    canvas.addEventListener('pointercancel', endDrag);
-
     const unsubscribe = characterStore.subscribe((state) => {
         figure.apply(state);
         showState(state);
+        dirty = true;
     });
     showState(characterStore.get());
 
-    function frame(dt, now) {
-        if (!dragging && !auto && !frozen && now >= resumeAt) {
-            auto = true;
+    // Called every world frame, before the main render. Cheap unless it is time to draw.
+    function draw(gl, dt, now, visible) {
+        if (!visible) {
+            return;
         }
-        time += dt;
-        if (auto && !frozen) {
-            yaw += dt * 0.55;
+        const cw = previewHost.clientWidth;
+        const ch = previewHost.clientHeight;
+        if (!cw || !ch) {
+            return;
         }
-        resize();
-        figure.root.rotation.y = yaw;
         figure.update(dt, { walk: 0, looking: false });
-        renderer.render(scene, camera);
+        if (!dirty && now - lastDraw < FRAME_MS) {
+            return;
+        }
+        const pr = gl.getPixelRatio();
+        const w = Math.max(1, Math.round(cw * pr));
+        const h = Math.max(1, Math.round(ch * pr));
+        gl.getDrawingBufferSize(_size);
+        if (w > _size.x || h > _size.y) {
+            return;
+        }
+        if (w !== width || h !== height) {
+            width = w;
+            height = h;
+            canvas.width = w;
+            canvas.height = h;
+            frameCamera(w, h);
+        }
+        gl.getViewport(_vp);
+        gl.getClearColor(_col);
+        const alpha = gl.getClearAlpha();
+        gl.setViewport(0, 0, cw, ch);
+        gl.setScissor(0, 0, cw, ch);
+        gl.setScissorTest(true);
+        gl.setClearColor(0xffffff, 0);
+        gl.render(scene, camera);
+        gl.setScissorTest(false);
+        gl.setClearColor(_col, alpha);
+        gl.setViewport(_vp);
+        ctx2d.clearRect(0, 0, w, h);
+        ctx2d.drawImage(gl.domElement, 0, _size.y - h, w, h, 0, 0, w, h);
+        lastDraw = now;
+        dirty = false;
     }
 
     function dispose() {
+        bound.forEach((b) => b[0].removeEventListener('click', b[1]));
         unsubscribe();
         figure.dispose();
         shadow.geometry.dispose();
         shadow.material.dispose();
-        renderer.dispose();
-        try {
-            renderer.forceContextLoss();
-        } catch (e) {
-            // Already gone.
-        }
         canvas.remove();
     }
 
     return {
-        frame,
+        draw,
         resize,
         dispose,
         canvas,
-        // Test hook: hold still at a given yaw (0 is the front view) and draw once.
+        invalidate() {
+            dirty = true;
+        },
+        // Test hook: turn the figure to a given yaw (0 is the front view) and redraw.
         pose(y) {
-            frozen = true;
-            auto = false;
-            yaw = y;
+            figure.root.rotation.y = y;
+            dirty = true;
         },
         figure
     };

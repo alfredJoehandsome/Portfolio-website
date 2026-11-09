@@ -1,498 +1,83 @@
-// Boot and mode switching for the Wii world: a real 3D island with the board DOM rendered by
-// CSS3DRenderer underneath a WebGL canvas (see scene.js for the layering).
-import { THREE, webglAvailable, createStage, blobTexture } from './scene.js';
-import { makeLayout, applyPose, project, travelAmount } from './camera.js';
-import { buildIsland } from './island.js';
-import { buildBoards } from './boards.js';
-import { buildFlowers } from './flowers.js';
-import { buildClouds } from './clouds.js';
-import { buildCharacter, characterStore, DEFAULT_CHARACTER } from './character.js';
-import { createCreator } from './creator.js';
-import { createInput } from './input.js';
-import { createHud, setNavMode, fitNavRow } from './hud.js';
-import { CSS3DObject } from '../vendor/three/addons/renderers/CSS3DRenderer.js';
-
-const COMPACT_W = 900;          // narrower or shorter than this uses the compact (phone) layout
-const COMPACT_H = 600;
-const FONT_WEIGHTS = [400, 500, 700, 800];
+// Entry point. Decides between the 3D world and the plain vertical page BEFORE any three.js
+// is downloaded (the world module is imported dynamically, only for devices that pass).
+import { decide, rememberAuto, setUserMode } from './capability.js';
 
 const root = document.documentElement;
-// The world needs scripts anyway; the stylesheet keys the dialog and creator layout on this class.
+// The stylesheet keys the dialog, creator and plain-page layout on this class.
 root.classList.add('js');
-const main = document.querySelector('main');
-const sections = main ? Array.from(main.querySelectorAll(':scope > section[data-stop]')) : [];
-const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-const glOk = webglAvailable();
-const ids = sections.map((s) => s.id);
-const count = sections.length;
 
-let world = null;
-let hintGone = false;
-let lastIndex = 0;
-let resizeTimer = 0;
+const decision = decide();
+const info = { mode: decision.mode, reason: decision.reason, benchMs: null, gpu: decision.gpu, maxTex: decision.maxTex, done: false };
+window.__siteMode = info;
 
-const debug = { ready: false, frames: 0, frameTimes: [] };
-window.__world = debug;
+let abandonWorld = null;
 
-function eligible() {
-    return glOk && !motionQuery.matches && count > 0;
-}
-
-function isCompact() {
-    return window.innerWidth < COMPACT_W || window.innerHeight < COMPACT_H;
-}
-
-function stageHeight() {
-    const vv = window.visualViewport;
-    return Math.round(vv && vv.height ? vv.height : window.innerHeight);
-}
-
-function coarse() {
-    return !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-}
-
-function currentIndex() {
-    if (world) {
-        return world.input.targetIndex();
-    }
-    const i = ids.indexOf(window.location.hash.slice(1) === 'experience-2' ? 'experience' : window.location.hash.slice(1));
-    return i >= 0 ? i : lastIndex;
-}
-
-// ------------------------------------------------------------------------------------
-// Build and tear down
-// ------------------------------------------------------------------------------------
-function build(startIndex) {
-    const compact = isCompact();
-    const vw = window.innerWidth;
-    const vh = compact ? stageHeight() : window.innerHeight;
-    const dpr = Math.min(window.devicePixelRatio || 1, compact ? 1.5 : 2);
-
-    root.classList.add('world-mode');
-    root.classList.toggle('world-compact', compact);
-    if (compact) {
-        main.style.setProperty('--stage-h', vh + 'px');
-    }
-    setNavMode(true);
-    if (compact) {
-        fitNavRow(vw);
-    }
-    const navRow = document.querySelector('.nav-links');
-    const navBottom = navRow ? navRow.getBoundingClientRect().bottom : 52;
-
-    const L = makeLayout({ vw, vh, compact, count, navBottom, dpr });
-    main.style.setProperty('--board-w', L.boardW + 'px');
-    if (compact) {
-        main.style.setProperty('--board-h', L.region + 'px');
-    }
-
-    // Lazy images inside 3D-transformed boards are loaded unreliably, so load them now.
-    sections.forEach((section) => {
-        section.querySelectorAll('img[loading="lazy"]').forEach((img) => {
-            img.setAttribute('data-was-lazy', '');
-            img.loading = 'eager';
-        });
-    });
-
-    // Measure the panels at their real width.
-    const measure = document.createElement('div');
-    measure.className = 'measure';
-    main.appendChild(measure);
-    sections.forEach((section) => {
-        section.style.width = L.boardW + 'px';
-        section.style.height = compact ? L.region + 'px' : '';
-        measure.appendChild(section);
-    });
-    const heights = sections.map((section) => (compact ? L.region : Math.ceil(section.offsetHeight)));
-
-    const ctx = createStage(main, L);
-    const island = buildIsland(ctx, L);
-    const boards = buildBoards(ctx, L, sections, heights);
-    measure.remove();
-    const flowers = buildFlowers(ctx, L, island.obstacles);
-    const topMax = Math.max.apply(null, boards.boards.map((b) => b.fit.centerY + b.fit.h / 2 + 18));
-    const clouds = buildClouds(ctx, L, topMax);
-
-    // The walker.
-    const figure = buildCharacter(characterStore.get());
-    figure.root.scale.setScalar(L.Hc);
-    ctx.scene.add(figure.root);
-    const shadowGeo = new THREE.PlaneGeometry(1, 1);
-    shadowGeo.rotateX(-Math.PI / 2);
-    const shadowMat = new THREE.MeshBasicMaterial({ map: blobTexture(), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
-    const walkShadow = new THREE.Mesh(shadowGeo, shadowMat);
-    walkShadow.scale.setScalar(L.Hc * 0.95);
-    walkShadow.renderOrder = 3;
-    ctx.scene.add(walkShadow);
-    const unsubscribe = characterStore.subscribe((state) => figure.apply(state));
-
-    // Compact boards scroll inside; a small "More" chip sits at the bottom of the panel.
-    const chips = [];
-    const scrolled = new Set();
-    const scrollHandlers = [];
-    function updateChip(i) {
-        if (!compact || !chips[i]) {
-            return;
-        }
-        const section = sections[i];
-        chips[i].element.hidden = section.scrollHeight - section.clientHeight - section.scrollTop <= 6;
-    }
-    if (compact) {
-        boards.boards.forEach((b, i) => {
-            const chip = document.createElement('button');
-            chip.type = 'button';
-            chip.className = 'board-more';
-            chip.tabIndex = -1;
-            chip.hidden = true;
-            chip.setAttribute('aria-label', 'Scroll down');
-            chip.appendChild(document.createTextNode('More '));
-            const ns = 'http://www.w3.org/2000/svg';
-            const chev = document.createElementNS(ns, 'svg');
-            chev.setAttribute('viewBox', '0 0 12 12');
-            chev.setAttribute('aria-hidden', 'true');
-            const p = document.createElementNS(ns, 'path');
-            p.setAttribute('d', 'M2 4l4 4 4-4');
-            chev.appendChild(p);
-            chip.appendChild(chev);
-            chip.addEventListener('click', () => {
-                b.section.scrollBy({ top: b.section.clientHeight * 0.8, behavior: 'smooth' });
-            });
-            const obj = new CSS3DObject(chip);
-            chip.style.userSelect = '';
-            obj.position.set(0, b.fit.centerY - b.fit.h / 2 + 26, 2);
-            b.group.add(obj);
-            chips.push(obj);
-            const onScroll = () => {
-                scrolled.add(i);
-                updateChip(i);
-            };
-            b.section.addEventListener('scroll', onScroll, { passive: true });
-            scrollHandlers.push(onScroll);
-        });
-        sections.forEach((section, i) => {
-            updateChip(i);
-            section.querySelectorAll('img').forEach((img) => {
-                if (!img.complete) {
-                    img.addEventListener('load', () => sections.forEach((s, j) => updateChip(j)), { once: true });
-                }
-            });
-        });
-    }
-
-    // Input and HUD.
-    const input = createInput({
-        root: main,
-        ids,
-        count,
-        onInput() {
-            if (!hintGone) {
-                hintGone = true;
-                if (world) {
-                    world.hud.hideHint();
-                }
-            }
-        },
-        onArrive(index) {
-            const id = ids[index];
-            if (window.location.hash !== '#' + id) {
-                try {
-                    history.replaceState(null, '', '#' + id);
-                } catch (e) {
-                    // Some contexts (file URLs, sandboxes) refuse this; ignore.
-                }
-            }
-        }
-    });
-    input.configure({ spacing: L.spacing, boardW: L.boardW });
-    input.place(startIndex);
-    const hud = createHud(main, {
-        sections,
-        ids,
-        compact,
-        count,
-        angles: sections.map((s, i) => (i * L.spacing) / L.Rb),
-        hintGone,
-        coarse: coarse(),
-        onGo: (i) => input.walkToIndex(i)
-    });
-
-    const creator = createCreator(sections[0]);
-    if (creator) {
-        creator.resize();
-    }
-
-    world = {
-        L, ctx, island, boards, flowers, clouds, figure, walkShadow, shadowGeo, shadowMat, unsubscribe,
-        chips, scrolled, scrollHandlers, updateChip, input, hud, creator, compact,
-        yaw: startIndex * ((Math.PI * 2) / count) + Math.PI,
-        time: 0,
-        pose: {},
-        raf: 0,
-        last: performance.now(),
-        first: true,
-        shownIndex: -1
-    };
-    input.attach();
-    window.__world = Object.assign(debug, {
-        L, ctx, boards: boards.boards, input: input.state, figure, creator,
-        project: (x, y, z) => project(ctx.camera, L, x, y, z),
-        // Test hooks.
-        setPos: (spacings) => input.place(0) || (input.state.current = input.state.target = spacings * L.spacing),
-        walkTo: (i) => input.walkToIndex(i),
-        setCharacter: (p) => characterStore.set(p)
-    });
-    frame(performance.now());
-}
-
-function teardown() {
-    if (!world) {
-        return;
-    }
-    const w = world;
-    window.cancelAnimationFrame(w.raf);
-    w.input.detach();
-    w.hud.dispose();
-    if (w.creator) {
-        w.creator.dispose();
-    }
-    w.unsubscribe();
-    w.figure.dispose();
-    w.shadowGeo.dispose();
-    w.shadowMat.dispose();
-    w.boards.boards.forEach((b, i) => {
-        if (w.scrollHandlers[i]) {
-            b.section.removeEventListener('scroll', w.scrollHandlers[i]);
-        }
-    });
-    sections.forEach((section) => {
-        main.insertBefore(section, w.ctx.stage);
-        section.removeAttribute('style');
-        section.removeAttribute('draggable');
-        section.scrollTop = 0;
-    });
-    document.querySelectorAll('img[data-was-lazy]').forEach((img) => {
-        img.loading = 'lazy';
-        img.removeAttribute('data-was-lazy');
-    });
-    w.flowers.dispose();
-    w.clouds.dispose();
-    w.boards.dispose();
-    w.ctx.dispose();
-    main.style.removeProperty('--board-w');
-    main.style.removeProperty('--board-h');
-    main.style.removeProperty('--stage-h');
-    setNavMode(false);
-    root.classList.remove('world-mode', 'world-compact');
-    world = null;
-    debug.ready = false;
-}
-
-// ------------------------------------------------------------------------------------
-// Frame loop
-// ------------------------------------------------------------------------------------
-const Y = new THREE.Vector3(0, 1, 0);
-const sunDir = new THREE.Vector3();
-const TAU = Math.PI * 2;
-
-function angleDiff(a, b) {
-    let d = (b - a) % TAU;
-    if (d > Math.PI) {
-        d -= TAU;
-    } else if (d < -Math.PI) {
-        d += TAU;
-    }
-    return d;
-}
-
-function frame(now) {
-    const w = world;
-    if (!w) {
-        return;
-    }
-    w.raf = window.requestAnimationFrame(frame);
-    const t0 = performance.now();
-    const dt = Math.max(0, Math.min(0.1, (now - w.last) / 1000));
-    w.last = now;
-    w.time += dt;
-    const { L, ctx, input, figure } = w;
-    const s = input.state;
-    input.update(now, dt);
-
-    applyPose(L, ctx.camera, s.current, w.pose);
-    const theta = w.pose.theta;
-
-    // The sun rides with the camera so every board is lit the same way.
-    sunDir.set(-0.55, 1, 0.6).applyAxisAngle(Y, theta);
-    ctx.sun.position.copy(sunDir);
-
-    // The walker stands on the path at the visitor's angle.
-    const px = Math.sin(theta) * L.Rp;
-    const pz = Math.cos(theta) * L.Rp;
-    const o = debug.charOverride;
-    figure.root.position.set(o ? o.x : px, o ? o.y : L.pathTop, o ? o.z : pz);
-    w.walkShadow.position.set(px, L.pathTop + 0.6, pz);
-    const settled = !s.walking;
-    let want;
-    if (settled) {
-        want = theta + Math.PI;                         // facing the board, back to the camera
-    } else {
-        want = s.velocity >= 0 ? theta + Math.PI / 2 + 0.34 : theta - Math.PI / 2 - 0.34;
-    }
-    w.yaw += angleDiff(w.yaw, want) * (1 - Math.exp(-dt * 7));
-    figure.root.rotation.y = w.yaw;
-    const worldSpeed = Math.abs(s.velocity) * (L.Rp / L.Rb);
-    figure.update(dt, {
-        walk: s.walking ? 1 : 0,
-        rate: Math.max(6, Math.min(14, (10.8 * worldSpeed) / L.Hc)),
-        looking: settled && w.pose.t < 0.5
-    });
-
-    w.flowers.update(w.time, theta);
-    w.clouds.update(w.time);
-
-    const index = input.currentIndex();
-    if (w.creator && index === 0) {
-        w.creator.frame(dt, now);
-    }
-    if (index !== w.shownIndex) {
-        if (w.compact) {
-            // Boards left behind go back to the top.
-            w.scrolled.forEach((i) => {
-                if (i !== index) {
-                    sections[i].scrollTop = 0;
-                    w.scrolled.delete(i);
-                    w.updateChip(i);
-                }
-            });
-        }
-        w.shownIndex = index;
-        lastIndex = index;
-    }
-    w.hud.update(theta, index);
-
-    // Let the compositor own the DOM layer while the world moves, crisp text when it rests.
-    const moving = s.walking || w.pose.t > 0.001 || s.magnet || s.inertia || Math.abs(s.target - s.current) > 0.5;
-    const camEl = ctx.cssLayer.firstChild && ctx.cssLayer.firstChild.firstChild;
-    if (camEl && camEl.style) {
-        const wc = moving ? 'transform' : 'auto';
-        if (w.willChange !== wc) {
-            camEl.style.willChange = wc;
-            w.willChange = wc;
-        }
-    }
-
-    ctx.css.render(ctx.scene, ctx.camera);
-    ctx.gl.render(ctx.scene, ctx.camera);
-
-    if (w.first) {
-        w.first = false;
-        debug.ready = true;
-        root.classList.add('world-ready');
-        window.setTimeout(() => root.classList.remove('world-loading'), 600);
-    }
-    debug.frames++;
-    debug.frameTimes.push(now);
-    if (debug.frameTimes.length > 600) {
-        debug.frameTimes.shift();
-    }
-    debug.index = index;
-    debug.t = w.pose.t;
-    debug.theta = theta;
-    debug.cost = performance.now() - t0;
-}
-
-// ------------------------------------------------------------------------------------
-// Mode switching
-// ------------------------------------------------------------------------------------
-function refresh() {
-    const index = currentIndex();
-    if (eligible()) {
-        teardown();
-        build(index);
-    } else if (world) {
-        teardown();
-        root.classList.remove('world-loading', 'world-ready');
-        sections[index].scrollIntoView({ behavior: 'instant', block: 'start' });
-    }
-}
-
-function onViewportChange() {
-    window.clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(() => {
-        if (world && window.innerWidth === world.L.vw && stageHeightFor(world) === world.L.vh) {
-            return;
-        }
-        refresh();
-    }, 150);
-}
-
-function stageHeightFor(w) {
-    return w.compact ? stageHeight() : window.innerHeight;
-}
-
-document.addEventListener('visibilitychange', () => {
-    if (!world) {
-        return;
-    }
-    if (document.hidden) {
-        window.cancelAnimationFrame(world.raf);
-        world.raf = 0;
-    } else if (!world.raf) {
-        world.last = performance.now();
-        world.raf = window.requestAnimationFrame(frame);
+// The "Simple version" line on the start board (the real node moves around, so delegate).
+document.addEventListener('click', (event) => {
+    if (event.target && event.target.closest && event.target.closest('[data-simple-version]')) {
+        setUserMode('plain');
     }
 });
 
-window.addEventListener('resize', onViewportChange);
-window.addEventListener('orientationchange', onViewportChange);
-if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', onViewportChange);
-}
-if (motionQuery.addEventListener) {
-    motionQuery.addEventListener('change', refresh);
-}
-
-if (window.location.hash === '#experience-2') {
-    try {
-        history.replaceState(null, '', '#experience');
-    } catch (e) {
-        // The board lookup still understands the alias.
-    }
-    window.addEventListener('DOMContentLoaded', () => {
-        if (!world) {
-            const el = document.getElementById('experience');
-            if (el) {
-                el.scrollIntoView({ block: 'start' });
-            }
-        }
-    });
-}
-
-async function boot() {
-    if (!eligible()) {
+function addTryButton() {
+    if (info.reason === 'no-webgl' || info.reason === 'reduced-motion') {
         return;
     }
-    root.classList.add('world-loading');
-    // The web font changes the panel sizes, so lay out once it is in (never wait long).
-    if (document.fonts && document.fonts.load) {
-        const loads = FONT_WEIGHTS.map((wt) => document.fonts.load(wt + ' 16px "M PLUS Rounded 1c"').catch(() => null));
-        await Promise.race([Promise.all(loads), new Promise((r) => window.setTimeout(r, 2500))]);
+    const list = document.querySelector('.nav-links');
+    if (!list || list.querySelector('.try-3d')) {
+        return;
     }
-    if (document.readyState === 'loading') {
-        await new Promise((r) => document.addEventListener('DOMContentLoaded', r, { once: true }));
-    }
-    try {
-        refresh();
-    } catch (e) {
-        // Anything unexpected: fall back to the plain vertical page.
-        console.error(e);
-        try {
-            teardown();
-        } catch (e2) {
-            // Ignore.
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'try-3d';
+    b.textContent = 'Try the 3D world';
+    b.addEventListener('click', () => setUserMode('3d'));
+    li.appendChild(b);
+    const resume = list.querySelector('a[href$="Resume.pdf"]');
+    list.insertBefore(li, resume ? resume.parentElement : null);
+}
+
+function goPlain(reason) {
+    info.mode = 'plain';
+    info.reason = reason;
+    info.done = true;
+    root.classList.remove('world-loading', 'world-ready', 'world-mode', 'world-compact');
+    root.classList.add('mode-plain');
+    addTryButton();
+}
+
+function onDecision(d) {
+    if (d.lost) {
+        goPlain('context-lost');
+    } else if (d.error) {
+        goPlain('error');
+    } else if (d.ready) {
+        info.done = true;
+    } else if (typeof d.benchMs === 'number') {
+        info.benchMs = d.benchMs;
+        info.limit = d.limit;
+        if (d.slow) {
+            rememberAuto('plain', 'bench-slow', d.benchMs);
+            if (abandonWorld) {
+                abandonWorld();
+            }
+            goPlain('bench-slow');
+        } else {
+            rememberAuto('3d', 'bench-pass', d.benchMs);
         }
-        root.classList.remove('world-loading', 'world-mode', 'world-compact');
     }
 }
 
-boot();
+if (decision.mode === 'plain') {
+    goPlain(decision.reason);
+} else {
+    root.classList.add('world-loading');
+    import('./world.js').then((m) => {
+        abandonWorld = m.abandon;
+        return m.start({ bench: decision.bench, onDecision: onDecision });
+    }).catch((e) => {
+        console.error(e);
+        goPlain('load-error');
+    });
+}

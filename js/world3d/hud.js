@@ -28,7 +28,7 @@ export function setNavMode(on) {
     if (!header) {
         return;
     }
-    header.querySelectorAll('.nav-links a').forEach((link) => {
+    header.querySelectorAll('.nav-links > li > a, .nav-links > li > .menu-btn').forEach((link) => {
         const isResume = link.classList.contains('btn');
         if (on) {
             if (!isResume) {
@@ -90,7 +90,7 @@ export function createHud(host, o) {
     // o: { sections, ids, compact, angles, count, hintGone, onGo(index), coarse }
     const hud = create('div', 'hud');
     const hint = create('p', 'hud__hint');
-    hint.textContent = o.coarse ? 'Swipe to walk' : 'Scroll or use the arrow keys to walk';
+    hint.textContent = o.coarse ? 'Swipe sideways or use the arrows' : 'Scroll, use the arrows or press the arrow keys';
     if (o.hintGone) {
         hint.classList.add('is-gone');
     }
@@ -98,6 +98,54 @@ export function createHud(host, o) {
     hud.appendChild(hint);
     hud.appendChild(counter);
     host.appendChild(hud);
+
+    // Big previous / next buttons (one board per press), labelled with the neighbour's title.
+    const titleOf = (i) => {
+        const sec = o.sections[(i + o.count) % o.count];
+        return sec.getAttribute('data-title') || sec.id;
+    };
+    function arrow(dir) {
+        const wrap = create('div', 'arrow-wrap arrow-wrap--' + (dir < 0 ? 'prev' : 'next'));
+        const btn = create('button', 'arrow');
+        btn.type = 'button';
+        const svg = document.createElementNS(NS, 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('aria-hidden', 'true');
+        const path = document.createElementNS(NS, 'path');
+        path.setAttribute('d', dir < 0 ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7');
+        svg.appendChild(path);
+        btn.appendChild(svg);
+        const label = create('span', 'arrow__label');
+        label.setAttribute('aria-hidden', 'true');
+        wrap.appendChild(btn);
+        wrap.appendChild(label);
+        // Pressing walks one board; holding walks on after a dwell on each board (see input.js).
+        btn.addEventListener('pointerdown', (event) => {
+            if (event.button === 0 || event.pointerType !== 'mouse') {
+                o.onStep(dir);
+                if (o.onHoldStart) {
+                    o.onHoldStart(dir);
+                }
+            }
+        });
+        ['pointerup', 'pointercancel', 'pointerleave'].forEach((type) => {
+            btn.addEventListener(type, () => {
+                if (o.onHoldEnd) {
+                    o.onHoldEnd();
+                }
+            });
+        });
+        // A click with no pointer (Enter or Space on the focused button) still steps once.
+        btn.addEventListener('click', (event) => {
+            if (event.detail === 0) {
+                o.onStep(dir);
+            }
+        });
+        host.appendChild(wrap);
+        return { wrap, btn, label };
+    }
+    const prevArrow = arrow(-1);
+    const nextArrow = arrow(1);
 
     const map = create('div', 'minimap');
     map.setAttribute('role', 'group');
@@ -138,7 +186,7 @@ export function createHud(host, o) {
     map.appendChild(me);
     host.appendChild(map);
 
-    const navLinks = Array.from(document.querySelectorAll('.nav-links a.is-sky'));
+    const navLinks = Array.from(document.querySelectorAll('.nav-links [data-nav].is-sky'));
     let shown = -1;
 
     function update(psi, index) {
@@ -151,11 +199,17 @@ export function createHud(host, o) {
         shown = index;
         const section = o.sections[index];
         const title = section.getAttribute('data-title') || section.id;
-        counter.textContent = index + 1 + ' / ' + o.count + ' · ' + title;
+        counter.textContent = o.compact ? index + 1 + ' / ' + o.count : index + 1 + ' / ' + o.count + ' · ' + title;
+        const prevTitle = titleOf(index - 1);
+        const nextTitle = titleOf(index + 1);
+        prevArrow.btn.setAttribute('aria-label', 'Previous: ' + prevTitle);
+        nextArrow.btn.setAttribute('aria-label', 'Next: ' + nextTitle);
+        prevArrow.label.textContent = prevTitle;
+        nextArrow.label.textContent = nextTitle;
         dots.forEach((dot, i) => dot.classList.toggle('is-current', i === index));
         const navTarget = NAV_FOR[o.ids[index]];
         navLinks.forEach((link) => {
-            if (link.getAttribute('href') === '#' + navTarget) {
+            if (link.getAttribute('data-nav') === navTarget) {
                 link.setAttribute('aria-current', 'true');
             } else {
                 link.removeAttribute('aria-current');
@@ -172,6 +226,8 @@ export function createHud(host, o) {
         dispose() {
             hud.remove();
             map.remove();
+            prevArrow.wrap.remove();
+            nextArrow.wrap.remove();
         }
     };
 }

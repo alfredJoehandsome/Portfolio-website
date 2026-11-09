@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content="#f4f7fa" />
     <title>Terms &amp; Privacy | Alfred Johansson</title>
     <meta name="description" content="Terms of service and privacy notice for alfredjohansson.fyi, the portfolio of Alfred Johansson." />
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap"
-          rel="stylesheet" />
 
     <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -49,11 +45,14 @@
             <h2>Privacy notice</h2>
             <p>I care about your privacy and collect as little as possible.</p>
 
-            <h3>Cookies and local storage</h3>
-            <p>This site does not use tracking or advertising cookies. It stores a couple of values in your browser's local storage: your cookie choice, so the notice does not appear on every visit, and the character you made. You can clear these at any time through your browser settings.</p>
+            <h3>Cookies</h3>
+            <p>This site sets no cookies and has no cookie banner. Nothing on it tracks you, and no third party is contacted when you visit.</p>
+
+            <h3>Local storage</h3>
+            <p>The site keeps two things in your browser's local storage, and only because you choose them: the character you made, and your choice of the 3D world or the simple version of the site. They stay on your device, nothing is sent anywhere, and you can clear them at any time through your browser settings.</p>
 
             <h3>Fonts</h3>
-            <p>The site loads fonts from Google Fonts. When it does, Google may receive your IP address as part of serving those files. No other information is shared with them.</p>
+            <p>The font (Lexend) is hosted on this site. Your browser does not contact Google or any other font service.</p>
 
             <h3>Analytics and advertising</h3>
             <p>There is no analytics, no tracking and no third party advertising on this site.</p>
@@ -67,16 +66,6 @@
         <p>&copy; <span id="year"></span> Alfred Johansson &middot; <a href="index.html">Back to site</a></p>
     </footer>
 
-    <!-- Cookie notice -->
-    <div id="cookie-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice" hidden>
-        <p class="cookie-banner__text">
-            This site uses only essential local storage to remember your preferences, such as your cookie choice and the character you made. It has no tracking or advertising cookies. Read the <a href="terms.html">terms and privacy</a>.
-        </p>
-        <div class="cookie-banner__actions">
-            <button type="button" class="btn btn--secondary btn--sm" id="cookie-decline">Decline</button>
-            <button type="button" class="btn btn--primary btn--sm" id="cookie-accept">Accept</button>
-        </div>
-    </div>
 
     <script src="js/script.js" defer></script>
 </body>
