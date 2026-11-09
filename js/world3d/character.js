@@ -658,6 +658,16 @@ export function buildCharacter(initial) {
     let walkAmt = 0;
     let lookAmt = 0;
 
+    // Gestures (scratching the head, pointing): one arm swings to a direction given in the
+    // figure's own space, blended in and out by weight.
+    const gest = { scratch: 0, point: 0, side: 1, dir: new THREE.Vector3(0, 1, 0) };
+    let scratchAmt = 0;
+    let pointAmt = 0;
+    const down = new THREE.Vector3(0, -1, 0);
+    const wantDir = new THREE.Vector3();
+    const scratchDir = new THREE.Vector3();
+    const qGest = new THREE.Quaternion();
+
     function paintFace() {
         const face = faceById(state.face);
         const c = faceCanvas.getContext('2d');
@@ -727,6 +737,8 @@ export function buildCharacter(initial) {
         lookAmt += ((input.looking ? 1 : 0) - lookAmt) * (1 - Math.exp(-dt * 6));
         phase += dt * (input.rate || 9) * (0.35 + 0.65 * walkAmt);
 
+        arms[0].rotation.set(0, 0, -0.1);
+        arms[1].rotation.set(0, 0, 0.1);
         const swing = Math.sin(phase) * 0.62 * walkAmt;
         legs[0].rotation.x = swing;
         legs[1].rotation.x = -swing;
@@ -762,6 +774,26 @@ export function buildCharacter(initial) {
         if (hatObj && hatObj.tick) {
             hatObj.tick(time);
         }
+
+        // Gestures on top of the walk and idle poses.
+        scratchAmt += (gest.scratch - scratchAmt) * (1 - Math.exp(-dt * 14));
+        pointAmt += (gest.point - pointAmt) * (1 - Math.exp(-dt * 12));
+        const weight = Math.min(1, scratchAmt + pointAmt);
+        if (weight > 0.002) {
+            const arm = arms[gest.side > 0 ? 1 : 0];
+            const sd = gest.side > 0 ? 1 : -1;
+            // Hand on the side of the head, rubbing back and forth.
+            const rub = Math.sin(time * 24);
+            scratchDir.set(sd * (0.4 + rub * 0.1), 0.9, 0.1 + Math.cos(time * 24) * 0.05).normalize();
+            wantDir.set(0, 0, 0).addScaledVector(scratchDir, scratchAmt).addScaledVector(gest.dir, pointAmt);
+            if (wantDir.lengthSq() > 1e-6) {
+                wantDir.normalize();
+                qGest.setFromUnitVectors(down, wantDir);
+                arm.quaternion.slerp(qGest, weight);
+            }
+            // The other arm stays put; the head leans into the scratch.
+            head.rotation.z += -sd * 0.1 * scratchAmt;
+        }
     }
 
     function dispose() {
@@ -777,6 +809,21 @@ export function buildCharacter(initial) {
     return {
         root, body, head, state,
         apply, setFace, setShirt, setPants, setHat, update, dispose,
+        // g: { scratch: 0..1, point: 0..1, side: 1 or -1 (the arm), dir: Vector3 (unit, figure space) }
+        setGesture(g) {
+            gest.scratch = g.scratch || 0;
+            gest.point = g.point || 0;
+            if (g.side) {
+                gest.side = g.side;
+            }
+            if (g.dir) {
+                gest.dir.copy(g.dir);
+            }
+        },
+        // Shoulder position in figure space, for aiming.
+        shoulder(side, out) {
+            return out.set(side * 0.165, 0.54, 0);
+        },
         blinkNow() {
             nextBlink = 0;
         }

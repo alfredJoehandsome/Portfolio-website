@@ -266,9 +266,11 @@ export function buildIsland(ctx, L, options) {
     const rimHi = Ri - 0.7 * u;
     for (let i = 0; i < L.count; i++) {
         const mid = (i + 0.5) * delta;
+        // The gap before Start is the house's yard: only rim trees stand there.
+        const yard = i === L.count - 1;
         // Outside the path stays low so it never hides the walker from the travel camera:
         // bushes, small blocks and stepping stones; the tall trees stand near the rim.
-        {
+        if (!yard) {
             const a = mid + (rand() - 0.5) * 0.3 * delta;
             const r = outerLo + (outerHi - outerLo) * (0.1 + rand() * 0.5);
             const x = Math.sin(a) * r;
@@ -295,7 +297,7 @@ export function buildIsland(ctx, L, options) {
             }
         }
         // Inside the ring: trees, bushes, blocks and stepping stones.
-        {
+        if (!yard) {
             const a = mid + (rand() - 0.5) * 0.3 * delta;
             const r = innerHi * (0.3 + rand() * 0.5);
             const x = Math.sin(a) * r;

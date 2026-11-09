@@ -5,6 +5,8 @@ import { setUserMode, markContextLost } from './capability.js';
 import { makeLayout, applyPose, project, travelAmount } from './camera.js';
 import { buildIsland } from './island.js';
 import { buildBoards } from './boards.js';
+import { buildHouse } from './house.js';
+import { createGag } from './gag.js';
 import { buildFlowers } from './flowers.js';
 import { buildClouds } from './clouds.js';
 import { buildCharacter, characterStore, DEFAULT_CHARACTER } from './character.js';
@@ -174,6 +176,8 @@ function build(startIndex) {
     const island = buildIsland(ctx, L);
     const boards = buildBoards(ctx, L, sections, heights);
     measure.remove();
+    const house = buildHouse(ctx, L);
+    island.obstacles.push.apply(island.obstacles, house.obstacles);
     const flowers = buildFlowers(ctx, L, island.obstacles);
     const topMax = Math.max.apply(null, boards.boards.map((b) => b.fit.centerY + b.fit.h / 2 + 18));
     const clouds = buildClouds(ctx, L, topMax);
@@ -189,6 +193,10 @@ function build(startIndex) {
     walkShadow.scale.setScalar(L.Hc * 0.95);
     walkShadow.renderOrder = 3;
     ctx.scene.add(walkShadow);
+    const gag = createGag({
+        L, figure, house,
+        emailEl: () => sections[count - 1].querySelector('.contact-email')
+    });
     const unsubscribe = characterStore.subscribe((state) => figure.apply(state));
 
     // The settled board lives in a native-scrolling 2D overlay (overlay.js).
@@ -200,8 +208,7 @@ function build(startIndex) {
         if (!compact) {
             return true;
         }
-        const d = Math.abs(b.index - center);
-        return Math.min(d, count - d) <= 1;
+        return Math.abs(b.index - center) <= 1;
     });
     function mountAround(center) {
         const want = mountedWanted(center);
@@ -242,6 +249,28 @@ function build(startIndex) {
                 }
             }
         },
+        // "Next" on the last board: the walker tries the house door (see gag.js).
+        onBeyond() {
+            const st = input.state;
+            if (world && world.gag && !st.explicit && Math.abs(st.target - st.current) < 0.5 && input.currentIndex() === count - 1) {
+                world.gag.trigger(st.current / L.Rb);
+            }
+        },
+        // "Previous" on the first board: the road ends here; the board gives a tiny nudge.
+        onBlocked() {
+            if (world && world.overlay && !world.overlay.el.hidden) {
+                const el = world.overlay.el;
+                el.classList.remove('is-nudge');
+                void el.offsetWidth;
+                el.classList.add('is-nudge');
+                window.setTimeout(() => el.classList.remove('is-nudge'), 320);
+            }
+        },
+        onNavigate() {
+            if (world && world.gag) {
+                world.gag.cancel();
+            }
+        },
         onArrive(index) {
             const id = ids[index];
             window.dispatchEvent(new CustomEvent('world:arrived', { detail: { id } }));
@@ -262,17 +291,18 @@ function build(startIndex) {
         compact,
         count,
         angles: sections.map((s, i) => (i * L.spacing) / L.Rb),
+        houseAngle: house.theta,
         hintGone,
         coarse: coarse(),
         onGo: (i) => input.walkToIndex(i),
-        onStep: (dir) => input.walkToIndex(input.targetIndex() + dir),
+        onStep: (dir) => input.step(dir),
         onHoldStart: (dir) => input.holdStart('arrow', dir),
         onHoldEnd: () => input.holdEnd('arrow')
     });
 
 
     world = {
-        L, ctx, island, boards, flowers, clouds, figure, walkShadow, shadowGeo, shadowMat, unsubscribe,
+        L, ctx, island, boards, flowers, clouds, house, gag, figure, charOff: 0, pan: 0, sx: 1, sy: 1, walkShadow, shadowGeo, shadowMat, unsubscribe,
         overlay, mountAround, calm: 0, mountedCenter: startIndex, input, hud, creator, compact,
         yaw: startIndex * ((Math.PI * 2) / count) + Math.PI,
         time: 0,
@@ -291,6 +321,8 @@ function build(startIndex) {
         // Test hooks.
         setPos: (spacings) => input.place(0) || (input.state.current = input.state.target = spacings * L.spacing),
         walkTo: (i) => input.walkToIndex(i),
+        gag: () => ({ phase: world.gag.phase, t: world.gag.time, active: world.gag.active, charOff: world.charOff, pan: world.pan }),
+        triggerGag: () => input.step(1),
         setCharacter: (p) => characterStore.set(p)
     });
     frame(performance.now());
@@ -355,6 +387,8 @@ function teardown() {
         img.loading = 'lazy';
         img.removeAttribute('data-was-lazy');
     });
+    w.gag.dispose();
+    w.house.dispose();
     w.flowers.dispose();
     w.clouds.dispose();
     w.boards.dispose();
@@ -393,42 +427,71 @@ function frame(now) {
     w.raf = window.requestAnimationFrame(frame);
     const t0 = performance.now();
     const dt = Math.max(0, Math.min(0.1, (now - w.last) / 1000));
+    // The gag keeps wall-clock time even when frames are slow.
+    const rawDt = debug.gagPause ? 0 : debug.gagFixed ? debug.gagFixed : Math.max(0, Math.min(0.25, (now - w.last) / 1000));
     w.last = now;
     w.time += dt;
     const { L, ctx, input, figure } = w;
     const s = input.state;
     input.update(now, dt);
 
-    applyPose(L, ctx.camera, s.current, w.pose);
-    const theta = w.pose.theta;
+    // The gag (if running) moves the walker off the visitor's angle and pans the camera along.
+    const g = w.gag.update(rawDt);
+    if (g) {
+        w.charOff = g.dTheta;
+        w.pan = g.pan;
+    } else {
+        const k = Math.exp(-dt * 9);
+        w.charOff = Math.abs(w.charOff * L.Rp) < 0.4 ? 0 : w.charOff * k;
+        w.pan = Math.abs(w.pan) < 0.4 ? 0 : w.pan * Math.exp(-dt * 7);
+    }
+    applyPose(L, ctx.camera, s.current + w.pan, w.pose);
+    const camTheta = w.pose.theta;
+    const theta = s.current / L.Rb + w.charOff;
 
     // The sun rides with the camera so every board is lit the same way.
-    sunDir.set(-0.55, 1, 0.6).applyAxisAngle(Y, theta);
+    sunDir.set(-0.55, 1, 0.6).applyAxisAngle(Y, camTheta);
     ctx.sun.position.copy(sunDir);
 
     // The walker stands on the path at the visitor's angle.
     const px = Math.sin(theta) * L.Rp;
     const pz = Math.cos(theta) * L.Rp;
     const o = debug.charOverride;
-    figure.root.position.set(o ? o.x : px, o ? o.y : L.pathTop, o ? o.z : pz);
+    const hop = g ? g.hop : 0;
+    figure.root.position.set(o ? o.x : px, (o ? o.y : L.pathTop) + hop, o ? o.z : pz);
     w.walkShadow.position.set(px, L.pathTop + 0.6, pz);
+    w.walkShadow.scale.setScalar(L.Hc * 0.95 * (1 - Math.min(0.4, hop / (L.Hc * 1.5))));
+    if (g) {
+        w.sx = g.sx;
+        w.sy = g.sy;
+    } else {
+        const e = 1 - Math.exp(-dt * 14);
+        w.sx += (1 - w.sx) * e;
+        w.sy += (1 - w.sy) * e;
+    }
+    figure.root.scale.set(L.Hc * w.sx, L.Hc * w.sy, L.Hc * w.sx);
     const settled = !s.walking;
     let want;
-    if (settled) {
+    if (g && g.yawRel !== null) {
+        want = theta + g.yawRel;
+    } else if (settled) {
         want = theta + Math.PI;                         // facing the board, back to the camera
     } else {
         want = s.velocity >= 0 ? theta + Math.PI / 2 + 0.34 : theta - Math.PI / 2 - 0.34;
     }
-    w.yaw += angleDiff(w.yaw, want) * (1 - Math.exp(-dt * 7));
+    w.yaw += angleDiff(w.yaw, want) * (1 - Math.exp(-dt * (g ? 11 : 7)));
     figure.root.rotation.y = w.yaw;
     const worldSpeed = Math.abs(s.velocity) * (L.Rp / L.Rb);
+    figure.root.updateMatrixWorld(true);
+    w.gag.late(ctx.camera, L.top - 14);
     figure.update(dt, {
-        walk: s.walking ? 1 : 0,
-        rate: Math.max(6, Math.min(14, (10.8 * worldSpeed) / L.Hc)),
-        looking: settled && w.pose.t < 0.5
+        walk: g ? g.walk : (s.walking ? 1 : 0),
+        rate: g ? g.rate : Math.max(6, Math.min(14, (10.8 * worldSpeed) / L.Hc)),
+        looking: g ? g.looking : settled && w.pose.t < 0.5
     });
 
-    w.flowers.update(w.time, theta);
+    w.flowers.update(w.time, camTheta);
+    w.house.update(w.time);
     w.clouds.update(w.time);
 
     const index = input.currentIndex();
@@ -442,7 +505,8 @@ function frame(now) {
     w.hud.update(theta, index);
 
     // Let the compositor own the DOM layer while the world moves, crisp text when it rests.
-    const moving = s.walking || w.pose.t > 0.001 || s.explicit || Math.abs(s.target - s.current) > 0.5;
+    const moving = s.walking || w.pose.t > 0.001 || s.explicit || Math.abs(s.target - s.current) > 0.5 ||
+        w.gag.blocking || Math.abs(w.pan) > 0.4 || Math.abs(w.charOff) > 0.0005;
     const camEl = ctx.cssLayer.firstChild && ctx.cssLayer.firstChild.firstChild;
     if (camEl && camEl.style) {
         const wc = moving ? 'transform' : 'auto';
@@ -469,7 +533,7 @@ function frame(now) {
 
     // The creator preview rides on the main renderer (one WebGL context for the page).
     if (w.creator) {
-        const near = Math.min(index, count - index) <= 1;
+        const near = index <= 1;
         w.creator.draw(ctx.gl, dt, now, near);
     }
 

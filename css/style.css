@@ -2613,3 +2613,135 @@ html.world-mode .lightbox.sign .lightbox__next {
 .terms-dialog .legal .dialog__title {
     margin-top: 0;
 }
+
+/* ==========================================================================
+   The house at the end of the road and its gag (3D world only)
+   ========================================================================== */
+.minimap svg.minimap__house {
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    margin: -7px 0 0 -6.5px;
+    fill: #e8735a;
+    stroke: #fff;
+    stroke-width: 1.2;
+    stroke-linejoin: round;
+    pointer-events: none;
+}
+
+.arrow-wrap[hidden] {
+    display: none;
+}
+
+.arrow:disabled {
+    pointer-events: none;
+}
+
+/* Previous at Start: the road ends, the board gives a 6px nudge back. */
+.board-overlay.is-nudge {
+    animation: board-nudge 300ms ease-out;
+}
+
+@keyframes board-nudge {
+    0% { translate: 0 0; }
+    35% { translate: 6px 0; }
+    100% { translate: 0 0; }
+}
+
+.gag-bubble {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 30;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.gag-bubble[hidden] {
+    display: none;
+}
+
+.gag-bubble__box {
+    position: relative;
+    width: max-content;
+    max-width: 260px;
+    box-sizing: border-box;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid var(--line-strong, #c9d2d9);
+    border-radius: 6px;
+    color: var(--ink);
+    font-family: "Lexend", system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    box-shadow: 0 2px 0 rgba(47, 52, 56, 0.08);
+}
+
+.gag-bubble__box.is-in {
+    animation: gag-pop 240ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes gag-pop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* The tail is a rotated square that carries the same border. */
+.gag-bubble__tail {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border: 1px solid var(--line-strong, #c9d2d9);
+    border-top: 0;
+    border-left: 0;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.gag-bubble__box[data-tail="down"] .gag-bubble__tail {
+    top: 100%;
+    margin-top: -1px;
+}
+
+.gag-bubble__box[data-tail="left"] .gag-bubble__tail {
+    left: 0;
+    margin-left: -1px;
+    transform: translate(-50%, -50%) rotate(135deg);
+}
+
+.gag-bubble__box[data-tail="right"] .gag-bubble__tail {
+    left: 100%;
+    margin-left: -1px;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.gag-live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.contact-email.email-pulse {
+    border-radius: 6px;
+    animation: email-pulse 1100ms ease-in-out 2;
+}
+
+@keyframes email-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(10, 120, 184, 0);
+        outline: 2px solid rgba(10, 120, 184, 0);
+        outline-offset: 4px;
+    }
+    50% {
+        box-shadow: 0 0 18px 6px rgba(74, 168, 224, 0.5);
+        outline: 2px solid rgba(10, 120, 184, 0.9);
+        outline-offset: 4px;
+    }
+}

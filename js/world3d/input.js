@@ -39,13 +39,19 @@ export function createInput(host) {
     let suppressClick = false;
     const wheel = { last: 0, acc: 0, locked: false, scrolled: false };
 
-    const wrap = (i) => ((i % count) + count) % count;
     const indexOfId = (id) => ids.indexOf(ALIASES[id] || id);
     const dialogOpen = () => !!document.querySelector('dialog[open]');
 
-    function goTo(newTarget) {
+    // The road has two ends (Start and Contact, with the house between them): positions are
+    // clamped, never wrapped, so no walk can pass through the house.
+    const lastIndex = () => count - 1;
+    function goTo(rawTarget) {
         if (!active) {
             return;
+        }
+        const newTarget = Math.max(0, Math.min(lastIndex() * spacing, rawTarget));
+        if (host.onNavigate) {
+            host.onNavigate();
         }
         s.rate = T.SMOOTH_NAV;
         s.explicit = true;
@@ -57,14 +63,29 @@ export function createInput(host) {
         if (!active) {
             return;
         }
-        const here = Math.round(s.target / spacing);
-        let delta = wrap(i - here);
-        if (delta > count / 2) {
-            delta -= count;
-        }
-        goTo((here + delta) * spacing);
+        goTo(Math.max(0, Math.min(lastIndex(), i)) * spacing);
     }
-    const stepBy = (n) => goTo((Math.round(s.target / spacing) + n) * spacing);
+    const hereIndex = () => Math.max(0, Math.min(lastIndex(), Math.round(s.target / spacing)));
+    function stepBy(n) {
+        if (!active) {
+            return;
+        }
+        const to = hereIndex() + n;
+        if (to > lastIndex()) {
+            if (host.onBeyond) {
+                host.onBeyond();
+            }
+            return;
+        }
+        if (to < 0) {
+            if (host.onBlocked) {
+                host.onBlocked();
+            }
+            return;
+        }
+        goTo(to * spacing);
+    }
+
     // Holding a key, an arrow button or the mouse on the empty world: walk one board, arrive,
     // dwell HOLD_DWELL ms, and walk on only if it is still held. Releasing stops at the board
     // being walked to. Key auto-repeat is ignored entirely.
@@ -98,8 +119,8 @@ export function createInput(host) {
     }
     const walkNext = () => stepBy(1);
     const walkPrev = () => stepBy(-1);
-    const targetIndex = () => wrap(Math.round(s.target / spacing));
-    const currentIndex = () => wrap(Math.round(s.current / spacing));
+    const targetIndex = () => hereIndex();
+    const currentIndex = () => Math.max(0, Math.min(lastIndex(), Math.round(s.current / spacing)));
 
     // Can the settled board's content still scroll in this direction (1 down, -1 up)?
     function canScroll(dir) {
@@ -134,7 +155,7 @@ export function createInput(host) {
             s.walking = false;
         }
         if (arrived) {
-            host.onArrive(wrap(Math.round(s.current / spacing)));
+            host.onArrive(currentIndex());
             holdArrived();
         }
         return arrived;
@@ -529,6 +550,7 @@ export function createInput(host) {
         indexOfId,
         update,
         walkToIndex,
+        step: stepBy,
         currentIndex,
         targetIndex,
         configure(p) {

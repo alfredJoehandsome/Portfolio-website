@@ -101,7 +101,7 @@ export function createHud(host, o) {
 
     // Big previous / next buttons (one board per press), labelled with the neighbour's title.
     const titleOf = (i) => {
-        const sec = o.sections[(i + o.count) % o.count];
+        const sec = o.sections[Math.max(0, Math.min(o.count - 1, i))];
         return sec.getAttribute('data-title') || sec.id;
     };
     function arrow(dir) {
@@ -182,6 +182,18 @@ export function createHud(host, o) {
         map.appendChild(dot);
         return dot;
     });
+    // The little house in the gap between Contact and Start.
+    const houseMark = document.createElementNS(NS, 'svg');
+    houseMark.setAttribute('class', 'minimap__house');
+    houseMark.setAttribute('viewBox', '0 0 12 12');
+    houseMark.setAttribute('aria-hidden', 'true');
+    const hp = document.createElementNS(NS, 'path');
+    hp.setAttribute('d', 'M1.5 6 L6 1.8 L10.5 6 L9.4 6 L9.4 10.2 L2.6 10.2 L2.6 6 Z');
+    houseMark.appendChild(hp);
+    const hpos = point(o.houseAngle);
+    houseMark.style.left = hpos.x + 'px';
+    houseMark.style.top = hpos.y + 'px';
+    map.appendChild(houseMark);
     const me = create('span', 'minimap__me');
     map.appendChild(me);
     host.appendChild(map);
@@ -200,8 +212,12 @@ export function createHud(host, o) {
         const section = o.sections[index];
         const title = section.getAttribute('data-title') || section.id;
         counter.textContent = o.compact ? index + 1 + ' / ' + o.count : index + 1 + ' / ' + o.count + ' · ' + title;
+        const first = index <= 0;
+        const last = index >= o.count - 1;
         const prevTitle = titleOf(index - 1);
-        const nextTitle = titleOf(index + 1);
+        const nextTitle = last ? 'House' : titleOf(index + 1);
+        prevArrow.wrap.hidden = first;
+        prevArrow.btn.disabled = first;
         prevArrow.btn.setAttribute('aria-label', 'Previous: ' + prevTitle);
         nextArrow.btn.setAttribute('aria-label', 'Next: ' + nextTitle);
         prevArrow.label.textContent = prevTitle;
