@@ -2809,3 +2809,61 @@ html.world-compact .ai-note {
         padding-bottom: 64px;
     }
 }
+
+/* ==========================================================================
+   Phones held sideways: the 3D world asks to be turned upright
+   (browsers do not let a normal web page lock the screen rotation)
+   ========================================================================== */
+.rotate-note {
+    display: none;
+}
+
+@media (orientation: landscape) and (max-height: 520px) and (pointer: coarse) {
+    html.world-mode .rotate-note {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: var(--s-2);
+        padding: var(--s-5);
+        background: var(--white);
+        color: var(--ink);
+        text-align: center;
+    }
+
+    html.world-mode .ai-note {
+        display: none;
+    }
+}
+
+.rotate-note__icon {
+    width: 64px;
+    height: 64px;
+    fill: none;
+    stroke: var(--blue);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.rotate-note__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.rotate-note__text {
+    margin: 0;
+    max-width: 32ch;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.rotate-note__link {
+    margin-top: var(--s-2);
+    font-size: 1rem;
+    font-weight: 600;
+}
