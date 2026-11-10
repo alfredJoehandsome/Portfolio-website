@@ -643,6 +643,12 @@ main {
     align-content: start;
 }
 
+.exp-item--next {
+    margin-bottom: var(--s-4);
+    padding-bottom: var(--s-4);
+    border-bottom: 2px solid var(--line);
+}
+
 .exp-item--wide {
     grid-template-columns: 5fr 7fr;
     gap: var(--s-7);

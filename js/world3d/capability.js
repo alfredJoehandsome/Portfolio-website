@@ -102,6 +102,16 @@ function oldPhone(ua) {
 export function decide() {
     const ua = navigator.userAgent || '';
     const query = new URLSearchParams(window.location.search);
+
+    // A visitor who asked for the simple version skips the graphics probe entirely.
+    if (query.has('simple')) {
+        return { mode: 'plain', reason: 'query-simple', bench: false, gpu: '', maxTex: 0 };
+    }
+    const early = query.has('force3d') ? null : stored();
+    if (early && early.reason === 'user' && early.mode !== '3d') {
+        return { mode: 'plain', reason: 'user', bench: false, gpu: '', maxTex: 0 };
+    }
+
     const gl = probe();
     const base = { gpu: gl.gpu, maxTex: gl.maxTex };
     const done = (mode, reason, bench) => Object.assign({ mode: mode, reason: reason, bench: !!bench }, base);
